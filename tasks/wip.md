@@ -2,52 +2,42 @@
 
 Read this first when resuming. Overwrite it whenever the in-progress task changes. Empty "In progress" means nothing was mid-flight.
 
-**Last updated:** 2 Sep 2026, milestone A merged, waiting on go for B
+**Last updated:** 2 Sep 2026, after merging uxvic's fork into master
 
 ## In progress
 
-UI refresh per `tasks/ui-refresh-plan.md`. Committed to master as d5aa889:
-- R0 `ussdText()` in engine.js, tested (11/11 green).
-- R1 to R3: `index.html` rewritten as a hash-routed app (home, answer, counter, detail, about), `localStorage` memory of last pair and five recent checks, persona actions (counter, read aloud, share, another farmer same depot).
-- R4 PWA: `manifest.json`, `sw.js`, icons, install nudge, offline pill.
-- R5 `strings.js`: full EN/SW toggle. Swahili is machine-drafted, `SWAHILI_REVIEWED = false`, needs the teammate's pass before demo.
-- R6 USSD note on the answer screen says "in progress, not live".
-- Milestone A, USSD: `ussd.js` (menu, pure), `api/ussd.js` (Vercel function, Africa's Talking CON/END), `test/ussd.test.js`. Every final screen equals the web share text. Still needs: Africa's Talking sandbox signup and callback URL pointed at the Vercel deploy, then a simulator run.
-- Counter and answer verdict words size from the longest word so "CONDITIONAL" and "BADO KUNA KITU" never clip.
-- Restyle (Victor, 2 Sep): dropped the cream/paper look, Manrope + JetBrains Mono, green-forward palette, light line-art farming hero. Farmer and depot pickers are now searchable bottom sheets. Service worker is network-first for HTML so deploys reach users on next open.
-- Previous page kept at `capture/index.v1.html`; problem-screen captures for the deck in `capture/`.
+Nothing mid-flight. The uxvic/master merge (commit a415e61) is committed and pushed. See PROGRESS.md and FOUNDATION.md §9 for what it reconciles.
 
-## v2: officer release system (2 Sep, evening)
+## Next up
 
-Specs in `specs/00` to `08`, signed off. GitHub epic #1 with milestones and tickets:
-- A engine #2 (tickets #3 #4 #5) DONE, merged as #28 #29 #30, 23 tests green
-- B store #6 (#7 #8)
-- C API #9 (#10 #11 #12 #13)
-- D officer UI #14 (#15 #16 #17 #18)
-- E farmer UI #19 (#20 #21)
-- F Codex polish #22 (#23 #24)
-- G deploy and demo #25 (#26 #27)
-Build order A to G, one ticket per PR. Spec links in the tickets point at `blob/master/specs/`, so the specs must be pushed before the links resolve.
-
-## Next up (from FOUNDATION.md §6)
-
-1. Step 4: script the Q&A answers (why secondary sources count as grounding; why no agronomic advice; why build USSD when KIAMIS has `*6163#`). Writing, not code, can go to a teammate.
-2. Step 5: pitch narrative, fair-price lead. Also writing.
-3. Step 6: static fallback capture. Do this once step 3's screen is final, not at the very end.
+1. Set `UPSTASH_REDIS_REST_URL`/`_TOKEN`, `OFFICER_PASSCODE`, and the `TWILIO_*` vars on the live Vercel project (`.env.example` has the full list). `api/board.js`/`api/season.js`/`api/approval.js` fail live without them.
+2. Africa's Talking sandbox signup and callback URL pointed at the Vercel deploy, then a simulator run, the actual test condition for Milestone A (issue #1), not yet done even though the code and `npm test` are green.
+3. Swahili strings need a native speaker's pass before demo, they were machine-drafted (see `strings.js` history; the review-status flag from the pre-merge UI refresh didn't survive the merge as a named constant, worth re-adding if it matters to whoever owns that review).
+4. Source 5 (The Star, 25 Aug 2026): still just a real headline and URL away from clearing the "link pending" notes.
 
 ## Waiting on Mailu
 
-- Source 5 (The Star, 25 Aug 2026): real headline and URL. Not blocking, the problem screen already shipped with an original headline and the existing grounded anecdote; the "link pending" note on the pull-quote and in the sources ledger will clear itself once the URL is added to `engine.js`.
-- A citable source for the depot/ward scale figures in MILESTONES.md (103 NCPB depots, 281 last-mile points, 1,382 wards), if one exists. Deliberately left off the problem screen otherwise.
-- Vercel: connect the repo, confirm production URL.
-- Owners for Milestones B and A; GitHub issues; collaborator invites (after milestone 1 acceptance).
+- The four items above, whichever aren't already being picked up by the team (uxvic, KodeckJames, Kajim360 all have collaborator access).
+- A citable source for the depot/ward scale figures in MILESTONES.md (103 NCPB depots, 281 last-mile points, 1,382 wards), if one exists.
 
 ## Done today
 
-- Repo seeded and pushed: `github.com/14leux/kilimo-nitapata` (private).
-- Plan review; decisions logged in FOUNDATION.md §9.
-- Step 0: rule engine extracted, prototype folded into repo, Vercel-ready layout.
-- Step 1: counter-presentable clerk view.
-- PROGRESS.md and TESTING.md added; every documented scenario verified live before writing it up.
-- Step 2: mobile polish (citation tap targets, iOS select zoom fix).
-- Step 3: problem screen. Original headline (not attributed to source 5 as a fabricated quote), Mt Elgon pull-quote correctly cited and self-clearing "link pending" note, four persona cards from presentation-copy.md, skip-to-check link. Scale figures deliberately omitted, no source grounds them. Verified live at desktop and 320px, 9/9 tests still green.
+- V1 core (steps 0 to 6), Milestone B (location), Vercel connected and verified live, session closed cleanly. See earlier entries in this file's git history, or PROGRESS.md, for the detail.
+- Reviewed and merged uxvic's fork into master: found the merge sitting uncommitted from an earlier session, verified it (48/48 tests, no conflict markers, engine.js properly reconciled rather than one side clobbering the other), completed it (added the untracked `favicon.png` and staged an in-progress polish pass so the merge wouldn't ship broken icon references), committed, pushed.
+- Found and reported the real gap: uxvic's fork's "Merge PR #28" through "#34" were all against the fork itself, zero PRs were ever opened against this repo. Commented on issue #1 with accurate status rather than closing it, its real test condition (a live AT simulator run) still hasn't happened.
+- FOUNDATION.md updated: v2 "officer release system" backend (Vercel functions + Upstash Redis, signed off by Victor, see `specs/00-one-pager.md`) now has its own stack row rather than silently contradicting the old "no database" line; two new Decision Log entries; new Open Item for the missing production env vars.
+
+---
+
+## History: v2 officer release system (built on uxvic's fork, merged into master 2 Sep)
+
+Specs in `specs/00` to `08`, signed off by Victor. Built as a GitHub epic with milestones and tickets, entirely within the fork (no PRs against this repo, see above):
+- A engine (subsidy gate, buildSnapshot, releaseText), B store (`lib/store.js`, `lib/register.js`), C API (`api/board.js`, `api/season.js`, `api/approval.js`), all DONE, all merged, all tested.
+- D officer UI, E farmer UI, F Codex polish, G deploy and demo: not confirmed done, the merge brought in the engine/store/API layer and a UI refresh, but check PROGRESS.md and the live site before assuming the full ticket list shipped.
+
+## History: pre-merge UI refresh (Victor, 2 Sep, also from the fork)
+
+- `index.html` rewritten as a hash-routed app (home, answer, counter, detail, about), `localStorage` memory of last pair and five recent checks, persona actions (counter, read aloud, share, another farmer same depot).
+- PWA: `manifest.json`, `sw.js`, icons, install nudge, offline pill.
+- `strings.js`: full EN/SW toggle, Swahili machine-drafted, needs review (see Next up).
+- Restyle: dropped the cream/paper look for Manrope + JetBrains Mono, green-forward palette, searchable bottom-sheet pickers, network-first service worker for HTML.

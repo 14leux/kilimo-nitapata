@@ -18,7 +18,8 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 | 5 | Pitch narrative (fair-price lead) | DONE | (this push) |
 | 6 | Static fallback capture | DONE | (this push) |
 | 7a | Milestone B (location) | DONE | (this push) |
-| 7b | Milestone A (USSD) | Not started, [issue #1](https://github.com/14leux/kilimo-nitapata/issues/1) open | |
+| 7b | Milestone A (USSD) | Code done (via merge below), sandbox simulator run still pending, see [issue #1](https://github.com/14leux/kilimo-nitapata/issues/1) | `a415e61` |
+| 8 | v2 officer release system merged from uxvic's fork (backend, board/season/approval, USSD, UI refresh) | DONE, env vars pending on Vercel | `a415e61` |
 
 ---
 
@@ -120,6 +121,19 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 **Why the manual fallback matters more than the happy path:** MILESTONES.md flagged that a judge's own device may deny or mis-report location in the room, so the pitch's critical path should never run through a live permission prompt. Verified by mocking `navigator.geolocation` to simulate both a permission-denied error and a successful position; the denied case leaves all 6 depots selectable and re-enables the button rather than leaving it stuck.
 
 **Test:** see [TESTING.md, Step 7a](TESTING.md#step-7a-milestone-b).
+
+---
+
+## Step 8, Merged uxvic's fork: v2 officer release system
+
+**Date:** 2 Sep 2026
+**What changed:** reviewed and completed a `git merge uxvic/master` that had been run in an earlier session, conflicts resolved, but never committed. Verification before finishing it: 48/48 tests passed on the merged tree, no leftover conflict markers, `engine.js` properly reconciled (both this repo's and the fork's independent Milestone B implementations landed on nearly identical hand-built coordinates, kept as one function, nothing dropped). Added the untracked `favicon.png` and staged an in-progress polish pass (softer "readiness demo, cannot confirm live stock" language, a real logo, reduced-motion support) that the merge's own edits depended on, so the commit wouldn't ship broken icon references. Commit `a415e61`, pushed.
+
+**What this brings in:** Milestone A (USSD: `ussd.js`, `api/ussd.js`, `test/ussd.test.js`), a v2 "officer release system" (a real Vercel-functions-plus-Redis backend, `lib/db.js`, `lib/store.js`, `api/board.js`, `api/season.js`, `api/approval.js`, signed off by Victor 2 Sep, see `specs/00-one-pager.md`), and a UI refresh (hash-routed app, PWA, EN/SW toggle). See `tasks/wip.md` for the fuller history.
+
+**What was found and flagged, not silently fixed:** zero PRs have ever been opened against this repo, `gh pr list --state all` returns nothing, all of the fork's own "Merge PR #28" through "#34" happened only inside the fork. Commented on issue #1 with accurate status rather than closing it, its real test condition (a live Africa's Talking simulator run) hasn't happened. FOUNDATION.md's stack section said "no database service"; corrected with a new row and Decision Log entries rather than left contradicting the shipped code. The live Vercel deployment does not yet have `UPSTASH_REDIS_REST_*` or `TWILIO_*` set, new Open Item in FOUNDATION.md.
+
+**Test:** `npm test`, 48/48. No dedicated TESTING.md section, this was a review-and-merge, not a new feature; the merged-in code carries its own tests.
 
 ---
 
