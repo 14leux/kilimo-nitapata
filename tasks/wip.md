@@ -2,11 +2,11 @@
 
 Read this first when resuming. Overwrite it whenever the in-progress task changes. Empty "In progress" means nothing was mid-flight.
 
-**Last updated:** 2 Sep 2026, UI refresh R0 to R4 built, not yet committed
+**Last updated:** 2 Sep 2026, milestone A merged, waiting on go for B
 
 ## In progress
 
-UI refresh per `tasks/ui-refresh-plan.md`. Built and locally verified, not committed:
+UI refresh per `tasks/ui-refresh-plan.md`. Committed to master as d5aa889:
 - R0 `ussdText()` in engine.js, tested (11/11 green).
 - R1 to R3: `index.html` rewritten as a hash-routed app (home, answer, counter, detail, about), `localStorage` memory of last pair and five recent checks, persona actions (counter, read aloud, share, another farmer same depot).
 - R4 PWA: `manifest.json`, `sw.js`, icons, install nudge, offline pill.
@@ -20,7 +20,7 @@ UI refresh per `tasks/ui-refresh-plan.md`. Built and locally verified, not commi
 ## v2: officer release system (2 Sep, evening)
 
 Specs in `specs/00` to `08`, signed off. GitHub epic #1 with milestones and tickets:
-- A engine #2 (tickets #3 #4 #5)
+- A engine #2 (tickets #3 #4 #5) DONE, merged as #28 #29 #30, 23 tests green
 - B store #6 (#7 #8)
 - C API #9 (#10 #11 #12 #13)
 - D officer UI #14 (#15 #16 #17 #18)
