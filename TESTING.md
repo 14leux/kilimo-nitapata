@@ -126,6 +126,31 @@ If `npm test` fails on a machine that isn't yours, don't chase it silently, say 
 
 ---
 
+## Step 7a, Milestone B
+
+**Automated:** `npm test`, now 12/12. Three new tests cover `haversineKm` and `nearestDepots`, including the one that matters most: an unauthorised depot never appears in the results even when it is the closest.
+
+**Manual, in the browser:**
+
+1. Open DevTools console and run, before clicking anything:
+   ```js
+   navigator.geolocation.getCurrentPosition = (ok) => ok({ coords: { latitude: -0.0917, longitude: 34.7680 } });
+   ```
+   This simulates a position in Kisumu, home to both an authorised depot (KNTC Kisumu Warehouse) and an unauthorised one (Mama Otieno's Agrovet), the sharpest test of the ranking rule.
+2. Click "Use my location to suggest the nearest depot". The status line should name KNTC Kisumu Warehouse as nearest, at approximately 0.0 km, and the depot dropdown should already have it selected.
+3. Open the depot dropdown. KNTC Kisumu Warehouse should be first, Mama Otieno's Agrovet should be last with no distance shown, confirm the unauthorised depot was excluded from the ranking, not just sorted to the bottom by coincidence.
+4. Click "Check this depot for this farmer". The verdict should compute normally against whichever depot is selected, the reorder doesn't break the checker.
+5. Reload the page (undoing the mock), then run this instead:
+   ```js
+   navigator.geolocation.getCurrentPosition = (ok, err) => err({ code: 1 });
+   ```
+   Click "Use my location" again. The status line should explain permission was denied, in an visibly different (warning) style from the success message, all 6 depots should still be present and selectable, and the button should not be stuck disabled.
+6. At 320px width, confirm the location button and status text don't overflow horizontally and remain tappable.
+
+**Pass condition:** all 6 checks pass, `npm test` shows 12/12, zero console errors in either the success or denied path.
+
+---
+
 ## Adding a new section
 
 Same rule as PROGRESS.md: copy the block below, fill it in, and do it in the same push that marks the step DONE.

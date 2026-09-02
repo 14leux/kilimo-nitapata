@@ -10,7 +10,9 @@ The repository is live at `github.com/14leux/kilimo-nitapata` (private). Open is
 
 ---
 
-## Milestone B: Location / GPS depot suggestion (first)
+## Milestone B: Location / GPS depot suggestion (first), DONE 2 Sep 2026
+
+See [PROGRESS.md, Step 7a](PROGRESS.md#step-7a-milestone-b-location--gps-depot-suggestion) for what shipped and [TESTING.md, Step 7a](TESTING.md#step-7a-milestone-b) to verify it. Left below for reference on the original spec and reasoning.
 
 **What it proves:** the app can point a farmer toward the nearest depot without him first knowing which one to pick, closing the gap between "here's a list" and "here's the one near you."
 

@@ -243,6 +243,17 @@
     display:inline-block; margin-top:22px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
     color:var(--stamp); text-decoration:none; border-bottom:1px dotted var(--stamp); padding:6px 0;
   }
+
+  /* Milestone B: location-based depot suggestion */
+  button.use-location{
+    display:block; width:100%; margin-top:8px; padding:11px 12px; font:inherit; font-size:13px; font-weight:600;
+    background:transparent; color:var(--stamp); border:1px dashed var(--stamp); border-radius:2px; cursor:pointer;
+  }
+  button.use-location:hover{ background:var(--paper-raised); }
+  button.use-location:disabled{ opacity:.55; cursor:default; }
+  .location-status{ margin-top:8px; font-size:12.5px; color:var(--ink-soft); line-height:1.5; }
+  .location-status.is-error{ color:var(--warn); }
+  select option.nearest-tag{ font-weight:600; }
 </style>
 </head>
 <body>
@@ -314,6 +325,8 @@
       <div class="field">
         <label for="depot-select">Depot / redemption point</label>
         <select id="depot-select"></select>
+        <button class="use-location" id="use-location-btn" type="button">Use my location to suggest the nearest depot</button>
+        <div class="location-status" id="location-status" hidden></div>
       </div>
     </div>
     <button class="check" id="check-btn" type="button">Check this depot for this farmer</button>
@@ -385,7 +398,7 @@
 </div>
 
 <script type="module">
-  import { SOURCES, PRICES, FARMERS, DEPOTS, VERDICT_LABEL, evaluate, findFarmer, findDepot, clerkSummary } from './engine.js';
+  import { SOURCES, PRICES, FARMERS, DEPOTS, VERDICT_LABEL, evaluate, findFarmer, findDepot, clerkSummary, nearestDepots } from './engine.js';
 
   const $ = (id) => document.getElementById(id);
 
@@ -399,7 +412,63 @@
   }
 
   fillSelect($('farmer-select'), FARMERS, (f) => f.name + ' · ' + f.id + ' · ' + f.county);
-  fillSelect($('depot-select'), DEPOTS, (d) => d.name + ' · ' + d.county);
+
+  function fillDepotSelect(orderedDepots, distanceMap){
+    $('depot-select').innerHTML = orderedDepots.map((d) => {
+      const dist = distanceMap && distanceMap.has(d.id)
+        ? ' · ~' + distanceMap.get(d.id).toFixed(1) + ' km away'
+        : '';
+      return '<option value="' + d.id + '">' + d.name + ' · ' + d.county + dist + '</option>';
+    }).join('');
+  }
+
+  fillDepotSelect(DEPOTS);
+
+  function setLocationStatus(text, isError){
+    const el = $('location-status');
+    el.textContent = text;
+    el.hidden = !text;
+    el.classList.toggle('is-error', Boolean(isError));
+  }
+
+  function useMyLocation(){
+    if(!navigator.geolocation){
+      setLocationStatus('Location is not available on this browser. Pick your depot manually below.', true);
+      return;
+    }
+    const btn = $('use-location-btn');
+    btn.disabled = true;
+    setLocationStatus('Locating...');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        btn.disabled = false;
+        const { latitude, longitude } = pos.coords;
+        const nearest = nearestDepots(latitude, longitude);
+        const nearestIds = new Set(nearest.map((d) => d.id));
+        const rest = DEPOTS.filter((d) => !nearestIds.has(d.id));
+        const distanceMap = new Map(nearest.map((d) => [d.id, d.distanceKm]));
+        fillDepotSelect([...nearest, ...rest], distanceMap);
+        $('depot-select').value = nearest[0].id;
+        setLocationStatus(
+          'Nearest authorised depot: ' + nearest[0].name + ', about ' + nearest[0].distanceKm.toFixed(1) +
+          ' km away (approximate town-centre distance, not the depot\'s exact address). Pick a different one below if you prefer.'
+        );
+        render();
+      },
+      (err) => {
+        btn.disabled = false;
+        const messages = {
+          1: 'Location permission denied. Pick your depot manually below, that still works fully.',
+          2: 'Location unavailable right now. Pick your depot manually below.',
+          3: 'Location took too long to respond. Pick your depot manually below.'
+        };
+        setLocationStatus(messages[err.code] || 'Could not get your location. Pick your depot manually below.', true);
+      },
+      { timeout: 8000 }
+    );
+  }
+
+  $('use-location-btn').addEventListener('click', useMyLocation);
 
   function renderSources(){
     $('sources-ledger').innerHTML = SOURCES.map((s) => {

@@ -32,7 +32,7 @@ Deploys to Vercel from this repo: framework preset "Other", no build command, ou
 
 ## Status
 
-V1 (hackathon build) core is functionally complete: steps 0 through 6 are done, see `PROGRESS.md` for what and `TESTING.md` for how to verify it yourself. What's left is entirely non-code: source 5's real link, and Milestones B (Location, first) and A (USSD, second), both open and unowned. See `MILESTONES.md` for build steps and test conditions if you want to pick one up; both can start now.
+V1 (hackathon build) core is functionally complete, steps 0 through 6, plus Milestone B (location), are done. See `PROGRESS.md` for what and `TESTING.md` for how to verify it yourself. What's left: source 5's real link, and Milestone A (USSD), open and unowned, see `MILESTONES.md` for the build steps and test condition.
 
 ## Non-negotiable constraints
 

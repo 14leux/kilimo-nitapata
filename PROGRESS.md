@@ -17,7 +17,8 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 | 4 | Scripted Q&A answers | DONE | (this push) |
 | 5 | Pitch narrative (fair-price lead) | DONE | (this push) |
 | 6 | Static fallback capture | DONE | (this push) |
-| 7 | Milestone B (location), then Milestone A (USSD) | Open for team, unowned | |
+| 7a | Milestone B (location) | DONE | (this push) |
+| 7b | Milestone A (USSD) | Not started, [issue #1](https://github.com/14leux/kilimo-nitapata/issues/1) open | |
 
 ---
 
@@ -106,6 +107,19 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 - `fallback/README.md`, what each image shows and the exact command to recapture them.
 
 **Test:** see [TESTING.md, Step 6](TESTING.md#step-6-fallback).
+
+---
+
+## Step 7a, Milestone B: location / GPS depot suggestion
+
+**Date:** 2 Sep 2026
+**What changed:**
+- `engine.js`: each depot record gained a `coords` field (`{ lat, lng, approx: true }`), hand-built town-centre approximations per MILESTONES.md, since no public list of real depot coordinates exists. Added `haversineKm(lat1, lng1, lat2, lng2)` and `nearestDepots(lat, lng)`, the latter returns **authorised depots only**, sorted nearest first, each with a `distanceKm`. Three new tests (12/12 total): distance is zero for identical points and symmetric, the nearest depot from a known position is correct and results are sorted, and, the important one, an unauthorised depot never appears in the results even when it is geographically the closest (tested from Kisumu, where the unauthorised agrovet and the authorised KNTC warehouse share a town).
+- `index.html`: a "Use my location" button next to the depot picker. On success, the depot dropdown is rebuilt with authorised depots first (nearest first, each showing its approximate distance) followed by the rest, the nearest is auto-selected, and a status line names it. On denial, timeout, or an unsupported browser, a status message explains why and the picker is left exactly as it was, fully usable, nothing about the manual flow changes.
+
+**Why the manual fallback matters more than the happy path:** MILESTONES.md flagged that a judge's own device may deny or mis-report location in the room, so the pitch's critical path should never run through a live permission prompt. Verified by mocking `navigator.geolocation` to simulate both a permission-denied error and a successful position; the denied case leaves all 6 depots selectable and re-enables the button rather than leaving it stuck.
+
+**Test:** see [TESTING.md, Step 7a](TESTING.md#step-7a-milestone-b).
 
 ---
 

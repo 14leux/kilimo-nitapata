@@ -149,7 +149,7 @@ The GitHub repository exists as of 2 Sep (private, `14leux/kilimo-nitapata`), so
 | Item | Depends on | Owner | Required for | Status |
 |---|---|---|---|---|
 | USSD channel: build or cut | Hours remaining after core V1 is solid; requires extracting the rule engine into a shared module first | Team, via GitHub, per MILESTONES.md | V1 stretch / V2 | PENDING, fully scoped |
-| GPS/location depot suggestion: build or cut | Hours remaining after core V1 is solid | Team, via GitHub, per MILESTONES.md | V1 stretch / V2 | PENDING, fully scoped |
+| GPS/location depot suggestion: build or cut | Hours remaining after core V1 is solid | Team, via GitHub, per MILESTONES.md | V1 stretch / V2 | **DONE 2 Sep**, see PROGRESS.md Step 7a |
 | Create the GitHub repository and add it as a remote | | Mailu | Team contribution to the two milestones above | DONE 2 Sep: `github.com/14leux/kilimo-nitapata`, private. Collaborator invites still to be sent once milestone 1 is accepted |
 | Source 5 (The Star, 25 Aug 2026): exact headline, article URL | Mailu has the article | Mailu | Sources ledger and problem-screen pull-quote both currently show "link pending" | PENDING, engine entry exists with an empty URL. Not blocking: the problem screen shipped 2 Sep using an original headline plus the Mt Elgon anecdote, which the existing entry already grounds |
 | A citable source for depot/ward scale figures (103 NCPB depots, 281 last-mile points, 1,382 wards, from MILESTONES.md) | Research, or confirm these came from one of sources 1 to 5 and add the citation | Mailu | Would strengthen the problem screen, not required for it | PENDING, deliberately left out of the problem screen rather than cited without grounding |

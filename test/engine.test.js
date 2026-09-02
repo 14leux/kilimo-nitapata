@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL, blockingItem, clerkSummary } from "../engine.js";
+import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL, blockingItem, clerkSummary, haversineKm, nearestDepots } from "../engine.js";
 
 const pairs = FARMERS.flatMap((f) => DEPOTS.map((d) => [f, d]));
 
@@ -80,6 +80,29 @@ test("clerk summary agrees with evaluate and resolves every citation", () => {
     assert.ok(s.sources.length > 0);
     for (const src of s.sources) assert.ok(src && src.id, `${f.id} x ${d.id} unresolved source`);
   }
+});
+
+test("haversineKm is zero for identical points and symmetric", () => {
+  assert.equal(haversineKm(1.0157, 35.0062, 1.0157, 35.0062), 0);
+  const a = haversineKm(1.0157, 35.0062, -0.0917, 34.7680);
+  const b = haversineKm(-0.0917, 34.7680, 1.0157, 35.0062);
+  assert.ok(Math.abs(a - b) < 1e-9);
+});
+
+test("nearestDepots: from Kitale, Kitale's own depot is nearest and within a few km", () => {
+  const results = nearestDepots(1.0157, 35.0062);
+  assert.equal(results[0].id, "D-01");
+  assert.ok(results[0].distanceKm < 1, `expected near-zero distance, got ${results[0].distanceKm}`);
+  for (let i = 1; i < results.length; i++) {
+    assert.ok(results[i].distanceKm >= results[i - 1].distanceKm, "not sorted ascending");
+  }
+});
+
+test("nearestDepots: from Kisumu, the unauthorised agrovet never appears even though it's closest", () => {
+  const kisumuDepot = DEPOTS.find((d) => d.id === "D-04");
+  const results = nearestDepots(kisumuDepot.coords.lat, kisumuDepot.coords.lng);
+  assert.ok(!results.some((d) => d.id === "D-05"), "unauthorised depot D-05 leaked into nearestDepots");
+  assert.equal(results[0].id, "D-04");
 });
 
 test("house style: no em dashes anywhere in engine text", () => {

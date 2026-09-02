@@ -83,13 +83,16 @@ export const FARMERS = [
     bagsUsed: 1, bagsAllocated: 4 }
 ];
 
+// coords are town-centre approximations, not the depot's actual address, per
+// MILESTONES.md Milestone B: no public list of depot coordinates was found,
+// so this is an honest hand-built interim stand-in, always shown as approx.
 export const DEPOTS = [
-  { id: "D-01", name: "NCPB Kitale Depot", county: "Trans Nzoia", type: "NCPB depot", authorized: true, fertilizers: ["DAP", "NPK", "CAN"] },
-  { id: "D-02", name: "NCPB Eldoret Depot", county: "Uasin Gishu", type: "NCPB depot", authorized: true, fertilizers: ["DAP", "NPK", "CAN"] },
-  { id: "D-03", name: "Highland Farmers Cooperative Store", county: "Nandi", type: "Cooperative", authorized: true, fertilizers: ["DAP", "NPK"] },
-  { id: "D-04", name: "KNTC Kisumu Warehouse", county: "Kisumu", type: "KNTC warehouse", authorized: true, fertilizers: ["DAP", "NPK", "CAN"] },
-  { id: "D-05", name: "Mama Otieno's Agrovet", county: "Kisumu", type: "Independent agrovet (unlisted)", authorized: false, fertilizers: ["DAP", "NPK"] },
-  { id: "D-06", name: "Kericho Agrovet Hub", county: "Kericho", type: "Registered agrovet", authorized: true, fertilizers: ["DAP", "NPK", "CAN"] }
+  { id: "D-01", name: "NCPB Kitale Depot", county: "Trans Nzoia", type: "NCPB depot", authorized: true, fertilizers: ["DAP", "NPK", "CAN"], coords: { lat: 1.0157, lng: 35.0062, approx: true } },
+  { id: "D-02", name: "NCPB Eldoret Depot", county: "Uasin Gishu", type: "NCPB depot", authorized: true, fertilizers: ["DAP", "NPK", "CAN"], coords: { lat: 0.5143, lng: 35.2698, approx: true } },
+  { id: "D-03", name: "Highland Farmers Cooperative Store", county: "Nandi", type: "Cooperative", authorized: true, fertilizers: ["DAP", "NPK"], coords: { lat: 0.2027, lng: 35.1049, approx: true } },
+  { id: "D-04", name: "KNTC Kisumu Warehouse", county: "Kisumu", type: "KNTC warehouse", authorized: true, fertilizers: ["DAP", "NPK", "CAN"], coords: { lat: -0.0917, lng: 34.7680, approx: true } },
+  { id: "D-05", name: "Mama Otieno's Agrovet", county: "Kisumu", type: "Independent agrovet (unlisted)", authorized: false, fertilizers: ["DAP", "NPK"], coords: { lat: -0.0917, lng: 34.7680, approx: true } },
+  { id: "D-06", name: "Kericho Agrovet Hub", county: "Kericho", type: "Registered agrovet", authorized: true, fertilizers: ["DAP", "NPK", "CAN"], coords: { lat: -0.3676, lng: 35.2861, approx: true } }
 ];
 
 export const PRICES = [
@@ -162,6 +165,30 @@ export function evaluate(farmer, depot) {
 export const findFarmer = (id) => FARMERS.find((f) => f.id === id);
 export const findDepot = (id) => DEPOTS.find((d) => d.id === id);
 export const findSource = (id) => SOURCES.find((s) => s.id === id);
+
+const EARTH_RADIUS_KM = 6371;
+
+/** Great-circle distance between two lat/lng points, in kilometres. */
+export function haversineKm(lat1, lng1, lat2, lng2) {
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return EARTH_RADIUS_KM * 2 * Math.asin(Math.sqrt(a));
+}
+
+/**
+ * Authorised depots only, sorted nearest first to (lat, lng), each with a
+ * distanceKm field. Unauthorised depots never appear here, however close,
+ * matching Milestone B: "suggested depot is the nearest authorised one."
+ */
+export function nearestDepots(lat, lng) {
+  return DEPOTS
+    .filter((d) => d.authorized)
+    .map((d) => ({ ...d, distanceKm: haversineKm(lat, lng, d.coords.lat, d.coords.lng) }))
+    .sort((a, b) => a.distanceKm - b.distanceKm);
+}
 
 /**
  * The single most important thing standing between this farmer and a bag,
