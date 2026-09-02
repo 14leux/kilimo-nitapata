@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL, blockingItem, clerkSummary } from "../engine.js";
+import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL, blockingItem, clerkSummary, ussdText, USSD_BUDGET } from "../engine.js";
 
 const pairs = FARMERS.flatMap((f) => DEPOTS.map((d) => [f, d]));
 
@@ -86,4 +86,36 @@ test("house style: no em dashes anywhere in engine text", () => {
   const blob = JSON.stringify({ SOURCES, REQUIREMENTS, PRICES, FARMERS, DEPOTS })
     + pairs.map(([f, d]) => evaluate(f, d).reason.text + clerkSummary(f, d).headline).join("");
   assert.equal(blob.includes("—"), false, "em dash found in engine copy");
+});
+
+test("ussdText fits one feature-phone screen for every pair and agrees with evaluate", () => {
+  for (const [f, d] of pairs) {
+    const t = ussdText(f, d);
+    const r = evaluate(f, d);
+    assert.ok(t.length <= USSD_BUDGET, `${f.id} x ${d.id} is ${t.length} chars`);
+    assert.ok(t.startsWith(VERDICT_LABEL[r.verdict].toUpperCase() + ":"), `${f.id} x ${d.id} wrong verdict word`);
+    assert.ok(t.includes("Sample data"), `${f.id} x ${d.id} missing sample-data label`);
+    assert.equal(t.includes("—"), false, `${f.id} x ${d.id} em dash`);
+    assert.equal(/<[a-z]/i.test(t), false, `${f.id} x ${d.id} markup in USSD text`);
+  }
+});
+
+test("UI strings: every English key has a Swahili twin, every engine key is translated, no em dashes", async () => {
+  const S = await import("../strings.js");
+  for (const k of Object.keys(S.STRINGS.en)) assert.ok(k in S.STRINGS.sw, `missing sw string: ${k}`);
+  for (const k of Object.keys(S.STRINGS.sw)) assert.ok(k in S.STRINGS.en, `orphan sw string: ${k}`);
+  for (const r of REQUIREMENTS) { assert.ok(S.REQ.en[r.key], r.key); assert.ok(S.REQ.sw[r.key], r.key); }
+  assert.ok(S.REQ.en.depot && S.REQ.sw.depot);
+  for (const v of Object.keys(VERDICT_LABEL)) { assert.ok(S.VERDICT.en[v]); assert.ok(S.VERDICT.sw[v]); }
+  const blob = JSON.stringify(S.STRINGS) + JSON.stringify(S.REQ) + JSON.stringify(S.VERDICT);
+  assert.equal(blob.includes("—"), false, "em dash in UI strings");
+  for (const l of ["en", "sw"]) {
+    S.setLang(l);
+    for (const [f, d] of pairs) {
+      const r = evaluate(f, d);
+      const lines = S.tScript(r, f, d, blockingItem(r, d));
+      assert.ok(lines.length >= 2 && lines.every((x) => x.sw && x.en), `${l} ${f.id} x ${d.id} script`);
+      assert.ok(S.tReason(r, f, d).length > 10, `${l} ${f.id} x ${d.id} reason`);
+    }
+  }
 });

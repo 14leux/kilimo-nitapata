@@ -211,3 +211,35 @@ export function clerkSummary(farmer, depot) {
     sources: citedIds.map(findSource)
   };
 }
+
+/**
+ * One USSD or SMS screen's worth of verdict. Plain text, no markup, no
+ * em dashes, and never longer than USSD_BUDGET characters so it fits a
+ * single feature-phone screen. The web share sheet sends exactly this
+ * string, so the forwarded SMS and the USSD reply are identical by
+ * construction.
+ */
+export const USSD_BUDGET = 160;
+
+export function ussdText(farmer, depot) {
+  const result = evaluate(farmer, depot);
+  const blocking = blockingItem(result, depot);
+  const label = VERDICT_LABEL[result.verdict].toUpperCase();
+  const price = PRICES[0].amount.replace(" / bag", "/bag");
+
+  let middle;
+  if (!blocking) {
+    middle = "All requirements met.";
+  } else if (blocking.key === "depot") {
+    middle = "Depot not authorised. Use an NCPB, coop, KNTC or registered agrovet.";
+  } else {
+    const more = result.gaps.length - 1;
+    middle = "Missing: " + blocking.title + (more > 0 ? " (+" + more + " more)" : "") + ".";
+  }
+
+  const text = label + ": " + farmer.name + " at " + depot.name + ". " + middle + " " + price + ". Sample data.";
+  if (text.length > USSD_BUDGET) {
+    throw new Error("ussdText over budget (" + text.length + "): " + text);
+  }
+  return text;
+}
