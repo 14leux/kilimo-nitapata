@@ -6,6 +6,8 @@ A mobile-first web app that answers three questions for a registered smallholder
 
 Built for the Claude Impact Lab, Nairobi.
 
+**Live:** [kilimo-nitapata.vercel.app](https://kilimo-nitapata.vercel.app)
+
 ## Start here
 
 - [`FOUNDATION.md`](FOUNDATION.md), the Project Foundation Document. Single source of truth for scope, stack, architecture, build sequence, open items, and the decision log. Read this first.
