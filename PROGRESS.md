@@ -137,6 +137,21 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 
 ---
 
+## Step 9, In-app USSD simulator
+
+**Date:** 2 Sep 2026
+**What changed:** a new `#ussd` screen, reached from a "No data bundle?" card on the answer screen. Feature-phone-styled terminal (monospace, LCD-green screen) that drives the real live `/api/ussd` endpoint over `fetch`, not a client-side reimplementation of `ussd.js`, so what it shows is exactly what a real USSD session would return. Session id is random per dial, the accumulated `text` field matches Africa's Talking's own protocol (digits joined by `*`). Ends the session and disables input on an `END` reply; "Dial again" starts fresh.
+
+**Why in-app rather than the real Africa's Talking sandbox:** getting a real shortcode requires creating an AT account, which is outside what an agent does on someone's behalf. An in-app simulator sidesteps that entirely, needs no signup, no phone, no account, and it's arguably a better demo asset: it can run standalone, offline of any telco, and still proves the mechanism against the actual deployed function. The real sandbox integration remains open in issue #1 for whoever wants to pursue the genuine end-to-end path.
+
+**Bug caught before shipping:** the simulator's session-text accumulator was first named `ussdText`, colliding with the `ussdText` function already imported from `engine.js` in the same module, `let` redeclaring an import binding is a hard SyntaxError that would have broken the entire app, not just the simulator. Caught before commit, renamed to `ussdDigits`.
+
+**Verified live** (via `vercel dev`, the only way to exercise `/api/ussd` locally): full farmer to depot to verdict flow returns the identical Conditional verdict and blocking item the web checker shows for the same pair; "Dial again" resets cleanly; Swahili toggle translates the screen chrome (the USSD transcript itself is bilingual by design, per `ussd.js`); no new horizontal overflow at 375px (a pre-existing, unrelated 7px topbar overflow exists on every screen including home, not introduced here, not fixed here, out of scope for this change). `npm test` unaffected, 48/48, since no `engine.js` or `ussd.js` file changed.
+
+**Test:** no dedicated automated test, this is a UI wrapper around already-tested logic (`ussd.js`'s own tests cover the protocol). Manual: open `#ussd`, dial through to a verdict, confirm it matches the same pair's answer screen.
+
+---
+
 ## Adding a new entry
 
 Copy the block below to the top of the step-by-step log (not the status table, update that too) when a step finishes. Keep the language plain enough that someone who has not read this session's chat can verify the claim.

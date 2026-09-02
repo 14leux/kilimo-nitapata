@@ -302,6 +302,28 @@
   .toast{ position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:10px 16px; border-radius:999px; font-size:14px; font-weight:700; box-shadow:var(--shadow); z-index:40;
     transition:opacity 200ms var(--ease-out), transform 200ms var(--ease-out); }
   .toast{ @starting-style{ opacity:0; transform:translate(-50%, 8px); } }
+
+  /* USSD simulator: drives the real /api/ussd endpoint, feature-phone look */
+  .phone{
+    background:#1B2420; border-radius:var(--radius); padding:16px; box-shadow:var(--shadow);
+    border:8px solid #0F1512;
+  }
+  .phone-screen{
+    background:#C9D6BE; color:#16241A; border-radius:6px; padding:14px;
+    font-family:'JetBrains Mono',monospace; font-size:14px; line-height:1.5;
+    min-height:220px; max-height:340px; overflow-y:auto; white-space:pre-wrap; word-break:break-word;
+  }
+  .phone-screen .turn{ padding-bottom:10px; margin-bottom:10px; border-bottom:1px dashed rgba(22,36,26,.25); }
+  .phone-screen .turn:last-child{ border-bottom:0; margin-bottom:0; padding-bottom:0; }
+  .phone-screen .sent{ color:#3C5230; font-weight:700; }
+  .phone-screen .end{ color:#7A2E20; font-weight:700; }
+  .phone-row{ display:flex; gap:8px; margin-top:12px; }
+  .phone-row input{
+    flex:1; min-width:0; font:inherit; font-family:'JetBrains Mono',monospace; font-size:16px;
+    padding:12px 14px; border-radius:var(--radius-s); border:0; background:var(--surface); color:var(--ink);
+  }
+  .phone-row input:disabled{ opacity:.5; }
+  .ussd-dial{ font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink-3); text-align:center; margin-bottom:10px; }
 </style>
 </head>
 <body>
@@ -434,7 +456,7 @@
 
   <div class="script" id="script" hidden></div>
 
-  <div class="card small muted" id="ussd-note"></div>
+  <button class="card small muted" id="ussd-note" type="button" style="text-align:left; width:100%; cursor:pointer; border:0"></button>
 
   <button class="btn ghost" type="button" id="btn-detail" data-s="answer.detail">See everything behind this answer</button>
   <p class="tiny" data-s="answer.sample">Sample data for demonstration. Not a live KIAMIS or county record.</p>
@@ -524,6 +546,30 @@
   </footer>
 </main>
 
+<!-- USSD SIMULATOR -->
+<main class="screen stack" id="s-ussd" hidden>
+  <div>
+    <div class="eyebrow" data-s="ussd.eyebrow">No smartphone, no data bundle</div>
+    <h2 data-s="ussd.head">Same answer, on a basic phone</h2>
+    <p class="lede" data-s="ussd.lede">This dials the same code the app runs on, live, right now. No shortcode is issued yet, so there is no real phone number to call; this simulator sends the exact request a phone would and shows the exact reply.</p>
+  </div>
+
+  <div class="phone">
+    <div class="ussd-dial" id="ussd-dial-line">*384*96633#</div>
+    <div class="phone-screen" id="ussd-screen" role="log" aria-live="polite"></div>
+    <div class="phone-row">
+      <input id="ussd-input" type="text" inputmode="numeric" autocomplete="off" placeholder="1" data-s-ph="ussd.placeholder">
+      <button class="btn primary sm" type="button" id="ussd-send" data-s="ussd.send">Send</button>
+    </div>
+  </div>
+
+  <div class="btn-grid">
+    <button class="btn secondary sm" type="button" id="ussd-restart" data-s="ussd.restart">Dial again</button>
+    <button class="btn ghost sm" type="button" id="ussd-back" data-s="ussd.back">Back</button>
+  </div>
+  <p class="tiny" data-s="ussd.disclaimer">Every screen here comes from the live /api/ussd endpoint, the same code Africa's Talking would call, not a mock.</p>
+</main>
+
 <script type="module">
   import { SOURCES, PRICES, FARMERS, DEPOTS, REQUIREMENTS, VERDICT_LABEL, evaluate, findFarmer, findDepot, findSource, clerkSummary, blockingItem, ussdText, distanceKm } from './engine.js';
   import { STRINGS, t, tReq, tVerdict, tReason, tScript, setLang, getLang } from './strings.js';
@@ -547,6 +593,7 @@
   function applyStrings(){
     document.documentElement.lang = getLang();
     document.querySelectorAll('[data-s]').forEach((el) => { const s = t(el.dataset.s); if(s != null) el.textContent = s; });
+    document.querySelectorAll('[data-s-ph]').forEach((el) => { const s = t(el.dataset.sPh); if(s != null) el.placeholder = s; });
     document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === getLang())));
   }
   document.querySelectorAll('.lang button').forEach((b) => b.addEventListener('click', () => {
@@ -744,6 +791,67 @@
   $('btn-detail').addEventListener('click', () => go('detail'));
   $('btn-back-answer').addEventListener('click', () => go('answer'));
   $('btn-back-answer-2').addEventListener('click', () => go('answer'));
+  $('ussd-note').addEventListener('click', () => go('ussd'));
+
+  // USSD simulator: a real session against the live /api/ussd endpoint,
+  // not a client-side reimplementation, so what's shown is exactly what a
+  // phone would see. sessionId is random per dial, text accumulates the
+  // digits typed so far joined by '*', matching Africa's Talking's own
+  // protocol (see ussd.js and api/ussd.js).
+  let ussdSessionId = null, ussdDigits = '', ussdEnded = false;
+  function ussdLine(cls, text){
+    const div = document.createElement('div'); div.className = 'turn';
+    const p = document.createElement('div'); p.className = cls; p.textContent = text;
+    div.appendChild(p);
+    $('ussd-screen').appendChild(div);
+    $('ussd-screen').scrollTop = $('ussd-screen').scrollHeight;
+  }
+  function ussdSetInputEnabled(on){
+    $('ussd-input').disabled = !on; $('ussd-send').disabled = !on;
+    if(on) $('ussd-input').focus();
+  }
+  async function ussdCall(){
+    const body = new URLSearchParams({
+      sessionId: ussdSessionId, serviceCode: '*384*96633#',
+      phoneNumber: '+254700000000', text: ussdDigits
+    });
+    ussdSetInputEnabled(false);
+    ussdLine('sent muted', t('ussd.dialing'));
+    try{
+      const res = await fetch('/api/ussd', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+      const reply = (await res.text()).trim();
+      $('ussd-screen').lastChild.remove();
+      const isEnd = reply.startsWith('END');
+      const shown = reply.replace(/^(CON|END)\s*/, '');
+      ussdLine(isEnd ? 'end' : '', shown);
+      ussdEnded = isEnd;
+      ussdSetInputEnabled(!isEnd);
+      if(isEnd) ussdLine('muted', t('ussd.ended'));
+    } catch(err){
+      $('ussd-screen').lastChild.remove();
+      ussdLine('end', t('ussd.error'));
+      ussdEnded = true;
+    }
+  }
+  function ussdRestart(){
+    ussdSessionId = 'sim-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+    ussdDigits = ''; ussdEnded = false;
+    $('ussd-screen').innerHTML = '';
+    $('ussd-input').value = '';
+    ussdCall();
+  }
+  function ussdSend(){
+    const v = $('ussd-input').value.trim();
+    if(!v || ussdEnded) return;
+    ussdLine('sent', '> ' + v);
+    ussdDigits = ussdDigits ? ussdDigits + '*' + v : v;
+    $('ussd-input').value = '';
+    ussdCall();
+  }
+  $('ussd-send').addEventListener('click', ussdSend);
+  $('ussd-input').addEventListener('keydown', (e) => { if(e.key === 'Enter') ussdSend(); });
+  $('ussd-restart').addEventListener('click', ussdRestart);
+  $('ussd-back').addEventListener('click', () => go('answer'));
 
   // Counter
   function renderCounter(){
@@ -798,11 +906,12 @@
   $('src5-pending-note').textContent = src5 && !src5.url ? ', ' + t('pending') : '';
 
   // Router
-  const SCREENS = ['home', 'answer', 'counter', 'detail', 'about'];
+  const SCREENS = ['home', 'answer', 'counter', 'detail', 'about', 'ussd'];
   function go(name, opts = {}){
     if(name === 'home' && opts.keepDepot){ location.hash = '#home/' + state.d; return; }
     if(name === 'home'){ location.hash = '#home'; return; }
     if(name === 'about'){ location.hash = '#about'; return; }
+    if(name === 'ussd'){ location.hash = '#ussd'; return; }
     location.hash = '#' + name + '/' + state.f + '/' + state.d;
   }
   function route(){
@@ -820,6 +929,7 @@
     if(name === 'answer') renderAnswer();
     if(name === 'counter') renderCounter();
     if(name === 'detail') renderDetail();
+    if(name === 'ussd') ussdRestart();
     window.scrollTo({ top: 0 });
   }
   function renderAll(){ route(); }
