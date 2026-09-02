@@ -2,11 +2,32 @@
 
 Read this first when resuming. Overwrite it whenever the in-progress task changes. Empty "In progress" means nothing was mid-flight.
 
-**Last updated:** 2 Sep 2026, after step 3
+**Last updated:** 2 Sep 2026, UI refresh R0 to R4 built, not yet committed
 
 ## In progress
 
-Nothing mid-flight. Step 3 is complete and committed.
+UI refresh per `tasks/ui-refresh-plan.md`. Built and locally verified, not committed:
+- R0 `ussdText()` in engine.js, tested (11/11 green).
+- R1 to R3: `index.html` rewritten as a hash-routed app (home, answer, counter, detail, about), `localStorage` memory of last pair and five recent checks, persona actions (counter, read aloud, share, another farmer same depot).
+- R4 PWA: `manifest.json`, `sw.js`, icons, install nudge, offline pill.
+- R5 `strings.js`: full EN/SW toggle. Swahili is machine-drafted, `SWAHILI_REVIEWED = false`, needs the teammate's pass before demo.
+- R6 USSD note on the answer screen says "in progress, not live".
+- Milestone A, USSD: `ussd.js` (menu, pure), `api/ussd.js` (Vercel function, Africa's Talking CON/END), `test/ussd.test.js`. Every final screen equals the web share text. Still needs: Africa's Talking sandbox signup and callback URL pointed at the Vercel deploy, then a simulator run.
+- Counter and answer verdict words size from the longest word so "CONDITIONAL" and "BADO KUNA KITU" never clip.
+- Restyle (Victor, 2 Sep): dropped the cream/paper look, Manrope + JetBrains Mono, green-forward palette, light line-art farming hero. Farmer and depot pickers are now searchable bottom sheets. Service worker is network-first for HTML so deploys reach users on next open.
+- Previous page kept at `capture/index.v1.html`; problem-screen captures for the deck in `capture/`.
+
+## v2: officer release system (2 Sep, evening)
+
+Specs in `specs/00` to `08`, signed off. GitHub epic #1 with milestones and tickets:
+- A engine #2 (tickets #3 #4 #5)
+- B store #6 (#7 #8)
+- C API #9 (#10 #11 #12 #13)
+- D officer UI #14 (#15 #16 #17 #18)
+- E farmer UI #19 (#20 #21)
+- F Codex polish #22 (#23 #24)
+- G deploy and demo #25 (#26 #27)
+Build order A to G, one ticket per PR. Spec links in the tickets point at `blob/master/specs/`, so the specs must be pushed before the links resolve.
 
 ## Next up (from FOUNDATION.md §6)
 
