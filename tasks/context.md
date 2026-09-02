@@ -2,30 +2,32 @@
 
 Stable facts a fresh session needs that are not obvious from the code. Keep short; FOUNDATION.md is the long-form source of truth.
 
-- **What this is:** hackathon build (Claude Impact Lab, Nairobi, 2 Sep 2026). Purpose is leverage, not revenue. See FOUNDATION.md §1.
-- **Discipline level:** lightweight by documented decision (FOUNDATION.md §7). Keep `tasks/wip.md` current; log decisions in FOUNDATION.md §9; no `.agent/` protocol, no `codebase_map.md`, README's own "Start here" / "Code" sections serve that purpose and stay current.
-- **Architecture in one line:** `engine.js` holds all data and `evaluate()` (plus `nearestDepots()` for location); `index.html` renders it; future channels (`api/ussd.js`) import the same engine. Never duplicate engine data.
-- **Hosting:** Vercel, linked and deployed. Live at [kilimo-nitapata.vercel.app](https://kilimo-nitapata.vercel.app), verified publicly reachable 2 Sep with no console errors. `.vercel/` exists locally (gitignored, correctly untracked) from the user's own `vercel link`.
-- **Hard constraints:** no model inference in verdicts; demo data always labelled as sample; no em dashes anywhere (tested); never silently drop a stated requirement; never fabricate a citation, if a source isn't grounded, omit the claim rather than invent an attribution (see the source-5-headline decision in FOUNDATION.md §9).
-- **Local run:** `npm test` (12/12), `npm run dev` (port 3000). Preview config in `.claude/launch.json`.
-- **Repo:** `github.com/14leux/kilimo-nitapata`, private, branch `master`. Collaborators already added: uxvic, KodeckJames, Kajim360 (uxvic has forked).
-- **Milestones:** B (location) shipped 2 Sep. A (USSD) tracked as [issue #1](https://github.com/14leux/kilimo-nitapata/issues/1), unowned.
+- **What this is:** hackathon build (Claude Impact Lab, Nairobi, 2 Sep 2026), now grown into a v2 "officer release system" (see `specs/00-one-pager.md`, signed off by teammate Victor). Purpose is leverage, not revenue, though the sustainability case for the v2 system is now real and researched, see the two council transcripts.
+- **Discipline level:** lightweight by documented decision (FOUNDATION.md §7). Keep `tasks/wip.md` current; log decisions in FOUNDATION.md §9; council transcripts (`council-transcript-*.md`) stand in for a decision log entry when the reasoning is long. No `.agent/` protocol, no `codebase_map.md`.
+- **Architecture in one line:** `engine.js` holds all data, `evaluate()`, `nearestDepots()`, `ussdText()`, `buildSnapshot()`, `releaseText()`. `index.html` is now a hash-routed PWA (home/answer/counter/detail/about/ussd). `ussd.js` + `api/ussd.js` are the real USSD channel (pull-only, not push, see below). `lib/store.js`/`lib/db.js` + `api/board.js`/`api/season.js`/`api/approval.js` are the v2 officer backend (Upstash Redis). Never duplicate engine data.
+- **USSD is pull-only.** The farmer dials in; nothing in this codebase can push a USSD message to him. Don't describe it as one of the things a Release "pushes through", that's inaccurate to what's built (found and corrected 2 Sep, flagged for `specs/00-one-pager.md` but not changed there, it's Victor's document).
+- **USSD cost, real and non-obvious:** in Kenya a standard shortcode bills the session to the farmer's own airtime (KES 1 to 5), not to the business. A toll-free shortcode shifts that cost to the operator for a KES 5,000 setup plus a higher monthly lease. This is an unmade decision, don't let a pitch or a partner conversation imply an answer before the team actually picks one.
+- **Hosting:** Vercel, linked and deployed. Live at [kilimo-nitapata.vercel.app](https://kilimo-nitapata.vercel.app). The officer-mode API routes (`api/board.js`/`season.js`/`approval.js`) currently 500 live, `UPSTASH_REDIS_REST_*`/`OFFICER_PASSCODE`/`TWILIO_*` are not yet set on the Vercel project. The core farmer checker and USSD simulator are unaffected.
+- **Hard constraints:** no model inference in verdicts; demo data always labelled as sample; no em dashes anywhere, including in HTML entity form (`&mdash;` renders the same as the literal character, both are banned); never silently drop a stated requirement; never fabricate a citation or a headline, if a source isn't grounded, omit the claim.
+- **Service worker caching:** `sw.js` precaches `engine.js`/`strings.js`/`index.html` cache-first, keyed to a `VERSION` string. Bump it on every deploy that changes any precached file's content, or returning visitors and installed PWAs keep the old version until a background refresh catches up, which for a one-time demo audience can mean never.
+- **Local run:** `npm test` (48/48). `npm run dev` serves static files only, does not run `/api/*`. Use `npx vercel dev` to exercise the USSD/officer endpoints locally.
+- **Repo:** `github.com/14leux/kilimo-nitapata`, private, branch `master`. Collaborators: uxvic, KodeckJames, Kajim360 (uxvic has forked). Zero PRs have ever been opened against this repo, work from the fork lands via direct merge, reviewed here, not there.
+- **Milestones:** B (location) shipped. A (USSD) has working code and an in-app simulator (`#ussd`), but its real test condition, a live Africa's Talking sandbox run, hasn't happened, tracked as [issue #1](https://github.com/14leux/kilimo-nitapata/issues/1).
+- **Sustainability narrative:** two council sessions, saved as `council-transcript-20260902T173000.md` (value prop, officer-release as the real sustainability story) and `council-transcript-20260902T190000.md` (corrected cost claim, persona/payer table). A local-only presentation, `presentation-sustainability.html`, exists for the user's own laptop use, not committed, not pushed, per explicit instruction.
 
 ---
 
-## Closing checkpoint, 2 Sep 2026
+## Closing checkpoint, 2 Sep 2026 (evening)
 
-**Goal this session:** stand up the project from source documents, build V1's core (steps 0 through 6), ship Milestone B, open tracking for Milestone A, get it live on Vercel.
+**What happened this stretch:** reviewed and completed an uncommitted merge of a teammate's fork (the v2 officer-release system, USSD, a full UI refresh), corrected FOUNDATION.md where it had gone stale against that merge, investigated and rejected an Africa's Talking MCP server, installed a design-skills package globally, built a working in-app USSD simulator, fixed the verdict-card wording (and a real PWA cache-versioning bug that surfaced during it), ran two council sessions on sustainability, and built a local-only presentation deck.
 
-**Completed:** everything above. V1 core is functionally complete and tested. Milestone B is done. Vercel deployment is live and verified. GitHub is current, nothing local-only.
+**Completed:** everything above, all verified live, not just claimed. 48/48 tests. GitHub fully current except the local-only presentation and its absence is intentional, not an oversight.
 
-**Current step:** none, session closing cleanly, not mid-task.
+**Current step:** none, session closing cleanly.
 
-**Next step (for whoever resumes):** either pick up Milestone A (issue #1), get source 5's real headline/URL from Mailu, or continue toward demo day with whatever the team prioritizes. See `tasks/wip.md` for the live version of this list, it will have moved on by the time anyone reads this section.
+**Next step (for whoever resumes):** the six items in `tasks/wip.md` under "Next up", most concretely: set the Vercel env vars, decide the USSD toll-free question, and get a real officer's answer to the one question the council flagged as the actual validation test ("would seeing what you see help or threaten you").
 
-**Blockers:** none blocking. Source 5's link and the depot/ward scale-figure citation remain open but nothing depends on them.
-
-**Milestone status:** V1 core done. Milestone B done. Milestone A open, unowned, fully scoped in the GitHub issue.
+**Blockers:** none blocking the core product. The officer-mode API routes are broken live until env vars are set, that's known and tracked, not a surprise for whoever opens the officer screens next.
 
 Status: CLOSED
 
@@ -33,11 +35,11 @@ Status: CLOSED
 
 ## Close Verification
 
-- PROGRESS.md / TESTING.md updated: yes, entries for steps 0 through 6 and Step 7a (Milestone B), each with what changed and how to verify it. This project uses these two files in place of a knowledge/lessons file; both current as of the last commit.
-- FOUNDATION.md Decision Log updated: yes, entries for the plan-review decisions, the source-5-headline call, and the Vercel connection.
-- FOUNDATION.md Open Items table updated: yes, GitHub repo creation, Milestone B, and Vercel connection all marked DONE this session; source 5 URL and the depot/ward citation remain PENDING, correctly still open.
-- Tracked-file reconcile: ran clean, `git ls-files` matches what README.md's "Start here" and "Code" sections describe, no drift found.
-- tasks/wip.md: left populated with the live "next up" list (this project's convention, not reset to a blank template, see FOUNDATION.md §7 on why the full crash-pad protocol wasn't adopted).
-- git commit created: yes, see the commit this file was written alongside.
+- PROGRESS.md / TESTING.md: not touched this stretch, no new build step landed, this was review, correction, and narrative work. Still current as of the last build-step entry.
+- FOUNDATION.md Decision Log and Open Items: updated, v2 backend stack row, two new decision entries, new Open Item for Vercel env vars.
+- Council transcripts: two, both saved, both linked from `tasks/wip.md`.
+- Tracked-file reconcile: `presentation-sustainability.html` and this evening's work are intentionally untracked/local-only per explicit user instruction, not a gap.
+- tasks/wip.md: rewritten, a duplicated section from a copy-paste edit was caught and removed before this close.
+- git commit created: yes, `5d6188f`, "Second council: correct the per-farmer cost claim on the pitch".
 - git push completed: yes, `git log @{u}..HEAD` empty, confirmed below.
 - git worktree audit: clean, single worktree, no stray entries.

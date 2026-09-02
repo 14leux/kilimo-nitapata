@@ -2,30 +2,36 @@
 
 Read this first when resuming. Overwrite it whenever the in-progress task changes. Empty "In progress" means nothing was mid-flight.
 
-**Last updated:** 2 Sep 2026, after merging uxvic's fork into master
+**Last updated:** 2 Sep 2026, session close
 
 ## In progress
 
-Nothing mid-flight. The uxvic/master merge (commit a415e61) is committed and pushed. See PROGRESS.md and FOUNDATION.md §9 for what it reconciles.
+Nothing. Session closed cleanly.
 
 ## Next up
 
 1. Set `UPSTASH_REDIS_REST_URL`/`_TOKEN`, `OFFICER_PASSCODE`, and the `TWILIO_*` vars on the live Vercel project (`.env.example` has the full list). `api/board.js`/`api/season.js`/`api/approval.js` fail live without them.
-2. Africa's Talking sandbox signup and callback URL pointed at the Vercel deploy, then a simulator run, the actual test condition for Milestone A (issue #1), not yet done even though the code and `npm test` are green.
-3. Swahili strings need a native speaker's pass before demo, they were machine-drafted (see `strings.js` history; the review-status flag from the pre-merge UI refresh didn't survive the merge as a named constant, worth re-adding if it matters to whoever owns that review).
-4. Source 5 (The Star, 25 Aug 2026): still just a real headline and URL away from clearing the "link pending" notes.
+2. Africa's Talking sandbox signup and callback URL pointed at the Vercel deploy, then a simulator run, the actual test condition for Milestone A (issue #1). The in-app simulator (`#ussd`) proves the code works, it isn't the same as a real sandbox run.
+3. Decide toll-free vs standard USSD shortcode before quoting cost to any partner, the two council sessions on 2 Sep found this decides whether the farmer or the operator pays the session fee. See `council-transcript-20260902T190000.md`.
+4. `specs/00-one-pager.md` and any future copy should describe USSD as pull-only (farmer dials in), not something a Release "pushes." Flagged for Victor, not changed here, it's his document.
+5. Swahili strings need a native speaker's pass before demo, they were machine-drafted.
+6. Source 5 (The Star, 25 Aug 2026): still just a real headline and URL away from clearing the "link pending" notes.
 
 ## Waiting on Mailu
 
-- The four items above, whichever aren't already being picked up by the team (uxvic, KodeckJames, Kajim360 all have collaborator access).
-- A citable source for the depot/ward scale figures in MILESTONES.md (103 NCPB depots, 281 last-mile points, 1,382 wards), if one exists.
+- The items above, whichever aren't already being picked up by the team (uxvic, KodeckJames, Kajim360 all have collaborator access).
+- A citable source for the depot/ward scale figures in MILESTONES.md, if one exists.
 
 ## Done today
 
-- V1 core (steps 0 to 6), Milestone B (location), Vercel connected and verified live, session closed cleanly. See earlier entries in this file's git history, or PROGRESS.md, for the detail.
-- Reviewed and merged uxvic's fork into master: found the merge sitting uncommitted from an earlier session, verified it (48/48 tests, no conflict markers, engine.js properly reconciled rather than one side clobbering the other), completed it (added the untracked `favicon.png` and staged an in-progress polish pass so the merge wouldn't ship broken icon references), committed, pushed.
-- Found and reported the real gap: uxvic's fork's "Merge PR #28" through "#34" were all against the fork itself, zero PRs were ever opened against this repo. Commented on issue #1 with accurate status rather than closing it, its real test condition (a live AT simulator run) still hasn't happened.
-- FOUNDATION.md updated: v2 "officer release system" backend (Vercel functions + Upstash Redis, signed off by Victor, see `specs/00-one-pager.md`) now has its own stack row rather than silently contradicting the old "no database" line; two new Decision Log entries; new Open Item for the missing production env vars.
+- V1 core (steps 0 to 6), Milestone B (location), Vercel connected and verified live.
+- Reviewed and merged uxvic's fork into master (`a415e61`): the v2 officer-release system, USSD (Milestone A code), a UI refresh. Found the merge sitting uncommitted from an earlier session, verified it (48/48 tests, engine.js properly reconciled), completed it, pushed. Commented on issue #1 with accurate status rather than closing it.
+- FOUNDATION.md corrected: v2's real backend now has its own stack row instead of contradicting the old "no database" line; Decision Log entries; new Open Item for missing production env vars.
+- Investigated an Africa's Talking MCP server, rejected it (wrong platform, SMS-only). Installed `emilkowalski/skills` globally instead.
+- Built an in-app USSD simulator (`#ussd`), drives the real live `/api/ussd` endpoint, no AT account needed. Caught and fixed a naming collision with the imported `ussdText()` before it shipped.
+- Verdict cards reworded to Utapata/Hutapata, Available/Unavailable. Caught and fixed a real bug in the process: `sw.js`'s cache `VERSION` wasn't bumped, which would have left returning visitors and installed PWAs seeing the old wording indefinitely.
+- Two council sessions on sustainability, both saved as transcripts. First: sharpened the value proposition, proposed the officer-release system as the actual sustainability story. Second, triggered by the user flagging a specific slide claim: corrected "under a dollar a farmer" into two honest numbers (business pays for SMS/WhatsApp, the farmer pays his own USSD session unless a toll-free line is bought), produced the persona/payer table.
+- Built `presentation-sustainability.html`, a 9-slide local deck matching the live app's own design tokens, not committed or pushed per the user's instruction (local-laptop use only). Includes the persona/payer grid and the corrected cost slide.
 
 ---
 
