@@ -83,6 +83,49 @@ If `npm test` fails on a machine that isn't yours, don't chase it silently, say 
 
 ---
 
+## Step 4, Q&A
+
+**Automated:** none, this step is content, not code.
+
+**Manual:**
+
+1. Open [QA.md](QA.md). Confirm all three questions FOUNDATION.md §6 names are present: data provenance, no agronomic advice, and why USSD when `*6163#` exists.
+2. Read each answer against the app itself: the sourcing answer should match what the "How this tool decides" panel in `index.html` actually says, don't let the two drift.
+3. Have someone who hasn't read this file ask you one of the three questions cold. If you find yourself improvising instead of recalling the scripted answer, that's a rehearsal gap, not a documentation gap, practice it, don't rewrite it.
+
+**Pass condition:** all three questions present, sourcing claims match the live app, answers can be delivered from memory.
+
+---
+
+## Step 5, Pitch
+
+**Automated:** none.
+
+**Manual:**
+
+1. Open [PITCH.md](PITCH.md). Read the opening line out loud. It must be the fair-price line, not a wasted-trip line, check it against the app's own problem-screen headline, they should match.
+2. Time a full read-through including the live demo steps. It should land close to 90 seconds to 2 minutes; if it's running long, cut from the middle sections, never the opening or the honest close about the stretch milestones.
+3. Confirm the "what it proves" section lists the same three points, in the same order, as FOUNDATION.md §2.4.
+
+**Pass condition:** opening line matches the app, timing is in range, the three-points section matches FOUNDATION.md.
+
+---
+
+## Step 6, Fallback
+
+**Automated:** none, but recapturing exercises the app itself, a failed capture command is a signal something upstream broke.
+
+**Manual:**
+
+1. Open `fallback/01-checker-served.png`. Confirm it shows the problem screen, the checker, a Served verdict, the full requirement ledger, price, and sources, all in one image, not cropped mid-section.
+2. Open `fallback/02-clerk-view-conditional.png`. Confirm it shows the clerk card with a Conditional verdict and a visible "Missing:" callout, not a Served card with no callout.
+3. Recapture both using the commands in `fallback/README.md`. They should complete without an error and produce non-trivial file sizes (tens of KB, not a few hundred bytes, which would indicate a blank capture).
+4. Load `http://localhost:3000/#clerk-demo` directly in a normal browser tab. Confirm the clerk view opens automatically with no click needed, this is what makes the capture possible; if it stops working, the fallback can no longer be recaptured without a manual click, fix the hook in `index.html` before relying on it again.
+
+**Pass condition:** both images show the right content, both recapture cleanly, the `#clerk-demo` hook still auto-opens the clerk view.
+
+---
+
 ## Adding a new section
 
 Same rule as PROGRESS.md: copy the block below, fill it in, and do it in the same push that marks the step DONE.

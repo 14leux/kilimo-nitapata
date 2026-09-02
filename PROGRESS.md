@@ -14,9 +14,9 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 | 1 | Counter-presentable clerk view | DONE | (this push) |
 | 2 | Mobile polish on the base scroll page | DONE | (this push) |
 | 3 | Problem screen (persona copy, Mt Elgon anecdote) | DONE | (this push) |
-| 4 | Scripted Q&A answers | Not started | |
-| 5 | Pitch narrative (fair-price lead) | Not started | |
-| 6 | Static fallback capture | Not started | |
+| 4 | Scripted Q&A answers | DONE | (this push) |
+| 5 | Pitch narrative (fair-price lead) | DONE | (this push) |
+| 6 | Static fallback capture | DONE | (this push) |
 | 7 | Milestone B (location), then Milestone A (USSD) | Open for team, unowned | |
 
 ---
@@ -76,6 +76,36 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 **Still open:** source 5's real headline and URL, whenever Mailu has them; a citable source for the depot/ward figures, if one turns up, would strengthen this screen but isn't required for it.
 
 **Test:** see [TESTING.md, Step 3](TESTING.md#step-3-problem-screen).
+
+---
+
+## Step 4, Scripted Q&A answers
+
+**Date:** 2 Sep 2026
+**What changed:** [QA.md](QA.md) added, three scripted answers to the questions FOUNDATION.md §6 names as the ones most likely to derail an improvised pitch: whether the data is official (it isn't, and the app already says so), why there's no agronomic advice (a considered exclusion, not an omission), and why build USSD when KIAMIS already has `*6163#` (different question answered). Each answer states the honest limit rather than smoothing over it, and each closes with a one-line note on why scripting it matters.
+
+**Test:** see [TESTING.md, Step 4](TESTING.md#step-4-qa).
+
+---
+
+## Step 5, Pitch narrative
+
+**Date:** 2 Sep 2026
+**What changed:** [PITCH.md](PITCH.md) added, the talk track for the live demo: opens with the fair-price exposure (matching the app's own problem-screen headline word for word, not a separate framing), grounds it with the Mt Elgon anecdote, walks the live demo in the order that shows the clerk view as the centerpiece rather than a bonus screen, states the three things the demo proves in FOUNDATION.md §2.4's own order, and closes with an honest line about the stretch milestones rather than implying either shipped.
+
+**Test:** see [TESTING.md, Step 5](TESTING.md#step-5-pitch).
+
+---
+
+## Step 6, Static fallback capture
+
+**Date:** 2 Sep 2026
+**What changed:**
+- `index.html`: added a small capture-only hook, when the URL carries `#clerk-demo` the page auto-selects a known Conditional pair and opens the clerk view on load. Not a feature, not linked from anywhere in the UI, exists purely so the fallback can be recaptured headlessly instead of by hand.
+- `fallback/01-checker-served.png` and `fallback/02-clerk-view-conditional.png`, captured via headless Chrome against the local dev server. The first is the full default-load page (problem screen through sources), the second is the clerk view's Conditional case.
+- `fallback/README.md`, what each image shows and the exact command to recapture them.
+
+**Test:** see [TESTING.md, Step 6](TESTING.md#step-6-fallback).
 
 ---
 

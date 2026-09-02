@@ -13,6 +13,9 @@ Built for the Claude Impact Lab, Nairobi.
 - [`TESTING.md`](TESTING.md), how to verify each completed step yourself, automated and manual. Run this before building on top of anything.
 - [`MILESTONES.md`](MILESTONES.md), full specs for the two stretch milestones open for team contribution: GPS/location depot suggestion (sequenced first) and the USSD channel (second). Both are scoped for someone to pick up independently.
 - [`presentation-copy.md`](presentation-copy.md), persona-segmented copy for the pitch and the app's problem screen.
+- [`PITCH.md`](PITCH.md), the talk track for the live demo.
+- [`QA.md`](QA.md), scripted answers to the questions most likely to derail the pitch.
+- [`fallback/`](fallback/), screenshots to fall back on if the live network drops.
 
 ## Code
 
@@ -29,7 +32,7 @@ Deploys to Vercel from this repo: framework preset "Other", no build command, ou
 
 ## Status
 
-V1 (hackathon build) in progress. Steps 0 and 1 are done, see `PROGRESS.md` for what and `TESTING.md` for how to verify it yourself. Milestones B (Location, first) and A (USSD, second) are open and unowned. See `MILESTONES.md` for build steps and test conditions if you want to pick one up; both can start now.
+V1 (hackathon build) core is functionally complete: steps 0 through 6 are done, see `PROGRESS.md` for what and `TESTING.md` for how to verify it yourself. What's left is entirely non-code: source 5's real link, and Milestones B (Location, first) and A (USSD, second), both open and unowned. See `MILESTONES.md` for build steps and test conditions if you want to pick one up; both can start now.
 
 ## Non-negotiable constraints
 

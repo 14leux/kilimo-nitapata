@@ -514,6 +514,16 @@
   renderPrices();
   renderSource5Note();
   render();
+
+  // Capture convenience only, not a feature: opens the clerk view directly
+  // for a known farmer/depot pair so the static fallback (PROGRESS.md,
+  // Step 6) can be re-captured headlessly without manual clicking.
+  if(location.hash === '#clerk-demo'){
+    $('farmer-select').value = 'F-3387';
+    $('depot-select').value = 'D-01';
+    render();
+    openClerk();
+  }
 </script>
 </body>
 </html>
