@@ -221,6 +221,28 @@
     margin-top:20px; padding:11px 16px; font:inherit; font-weight:600; font-size:13.5px;
     background:var(--ink); color:var(--paper); border:none; border-radius:2px; cursor:pointer;
   }
+
+  /* problem screen: opens the app, before the checker. Persona copy plus
+     the one grounded scale anecdote (source 5). Skippable by design. */
+  section.problem{ margin-top:28px; }
+  section.problem .problem-eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+  section.problem h2.problem-headline{ font-size:28px; margin-top:8px; line-height:1.2; }
+  section.problem .problem-sub{ font-size:15px; color:var(--ink-soft); margin-top:12px; line-height:1.6; }
+  .pull-quote{
+    margin:22px 0; padding:16px 18px; border-left:4px solid var(--accent);
+    background:var(--paper-raised); font-family:'Zilla Slab', serif; font-size:17px; line-height:1.5;
+  }
+  .pull-quote .pq-src{ display:block; margin-top:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); font-style:normal; }
+  .tying-line{ font-size:15px; line-height:1.6; margin:20px 0 26px; padding-bottom:22px; border-bottom:1px solid var(--line); }
+  .persona-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:560px){ .persona-grid{ grid-template-columns:1fr; } }
+  .persona-card{ padding:16px; background:var(--paper-raised); border:1px solid var(--line); }
+  .persona-card h3{ font-size:15px; margin-bottom:6px; }
+  .persona-card p{ font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin:0; }
+  a.skip-to-check{
+    display:inline-block; margin-top:22px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    color:var(--stamp); text-decoration:none; border-bottom:1px dotted var(--stamp); padding:6px 0;
+  }
 </style>
 </head>
 <body>
@@ -236,6 +258,42 @@
 </header>
 
 <div class="wrap" id="page-wrap">
+
+  <section class="problem" id="problem-section">
+    <div class="problem-eyebrow">Why this needs to exist</div>
+    <h2 class="problem-headline">He can't tell a fair price from an inflated one.</h2>
+    <p class="problem-sub">He already knows he's enrolled. What he doesn't know, until he's standing at the counter, is whether the price he's being asked for is the real one, or whether he's about to lose a day's labour and a fare finding out the hard way that something in his registration is missing.</p>
+
+    <blockquote class="pull-quote">
+      One farmer reached his depot by 4am and still found seven people ahead of him.
+      <cite class="pq-src">The Star, 25 Aug 2026<span id="src5-pending-note"></span></cite>
+    </blockquote>
+
+    <p class="problem-sub">Knowing you're eligible doesn't shorten that queue. But knowing before you travel, and being able to prove the price at the counter, changes what the trip costs you if it goes wrong.</p>
+
+    <div class="tying-line">The person typing the question, the person deciding whether to travel, and the person who has to be convinced at the counter are three different people. Most tools like this get built for the first one and quietly fail the other two.</div>
+
+    <div class="persona-grid">
+      <div class="persona-card">
+        <h3>The farmer</h3>
+        <p><em>Nikienda leo, nitapata?</em> If I go today, will I get it? He doesn't think in terms of eligibility. He thinks in terms of "they said we'd get fertiliser," and finds out otherwise only after he's already spent the trip.</p>
+      </div>
+      <div class="persona-card">
+        <h3>The proxy</h3>
+        <p>He's the one actually holding the phone, usually a son, daughter or grandchild who already runs the household's WhatsApp. He has to relay the answer accurately enough, by voice, that an older relative is willing to travel on the strength of it.</p>
+      </div>
+      <div class="persona-card">
+        <h3>The depot clerk</h3>
+        <p>Not a user of this app. The person the answer has to survive. A farmer holding up a screen with a specific number, from a specific dated source, either corrects a mistake or starts a confrontation, and he's the one who absorbs it either way.</p>
+      </div>
+      <div class="persona-card">
+        <h3>The extension officer</h3>
+        <p>She's already answering this question, one farmer at a time, all day. If this tool makes her faster, adoption doesn't happen one download at a time. It happens in groups, the moment she uses it in front of people she already talks to.</p>
+      </div>
+    </div>
+
+    <a class="skip-to-check" href="#check">Skip straight to the check &darr;</a>
+  </section>
 
   <div class="scope">
     <b>What this is.</b> A status check for the fertilizer subsidy e&#8209;Voucher scheme: whether a given depot will serve a given registered farmer, exactly what is still missing, and what the bag is documented to cost. Each answer is footnoted to the source it came from.
@@ -445,8 +503,16 @@
   $('show-clerk-btn').addEventListener('click', openClerk);
   $('back-from-clerk-btn').addEventListener('click', closeClerk);
 
+  function renderSource5Note(){
+    const src5 = SOURCES.find((s) => s.id === 5);
+    if(src5 && !src5.url){
+      document.getElementById('src5-pending-note').textContent = ', link pending';
+    }
+  }
+
   renderSources();
   renderPrices();
+  renderSource5Note();
   render();
 </script>
 </body>

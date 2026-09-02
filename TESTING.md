@@ -66,6 +66,23 @@ If `npm test` fails on a machine that isn't yours, don't chase it silently, say 
 
 ---
 
+## Step 3, Problem screen
+
+**Automated:** `npm test` should still show 9/9 (this step didn't touch `engine.js` beyond nothing, it reads the existing source 5 entry).
+
+**Manual, in the browser:**
+
+1. Load the page. The very first thing below the masthead should be "WHY THIS NEEDS TO EXIST" and the headline "He can't tell a fair price from an inflated one," before the scope banner and before the checker form.
+2. Confirm the pull-quote ("One farmer reached his depot by 4am...") is attributed to "The Star, 25 Aug 2026, link pending". The "link pending" text is generated from `engine.js`'s source 5 entry; once that entry gets a real URL, this note should disappear on its own without a manual edit here, confirm that if you're the one adding the URL.
+3. Confirm all four persona cards render (farmer, proxy, depot clerk, extension officer) plus the tying line above them.
+4. Click "Skip straight to the check". The page should jump to the farmer/depot picker, not to the top or somewhere mid-scroll.
+5. At 320px width, confirm the persona cards stack to a single column and nothing overflows horizontally.
+6. Confirm no depot-count or ward-count statistics appear anywhere on this screen. Their absence is deliberate (see PROGRESS.md, Step 3), not a bug, don't add them back without a citation.
+
+**Pass condition:** all 6 checks pass, `npm test` still 9/9, zero console errors.
+
+---
+
 ## Adding a new section
 
 Same rule as PROGRESS.md: copy the block below, fill it in, and do it in the same push that marks the step DONE.

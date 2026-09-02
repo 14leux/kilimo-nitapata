@@ -13,7 +13,7 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 | 0 | Extract rule engine (`engine.js`), fold prototype into repo, Vercel-ready layout | DONE | `46efd97` |
 | 1 | Counter-presentable clerk view | DONE | (this push) |
 | 2 | Mobile polish on the base scroll page | DONE | (this push) |
-| 3 | Problem screen (persona copy, scale figures) | Blocked on source 5 URL from Mailu | |
+| 3 | Problem screen (persona copy, Mt Elgon anecdote) | DONE | (this push) |
 | 4 | Scripted Q&A answers | Not started | |
 | 5 | Pitch narrative (fair-price lead) | Not started | |
 | 6 | Static fallback capture | Not started | |
@@ -61,6 +61,21 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 **Why 320px specifically:** this product's stated audience skews toward older or shared devices, not flagship phones, so the narrower of the two common breakpoints (320px, 375px) was checked deliberately rather than assumed to be fine because 375px passed.
 
 **Test:** see [TESTING.md, Step 2](TESTING.md#step-2-mobile-polish).
+
+---
+
+## Step 3, Problem screen
+
+**Date:** 2 Sep 2026
+**What changed:**
+- `index.html`: a new section opens the page, before the scope banner and the checker. Original headline ("He can't tell a fair price from an inflated one," leading with the fair-price exposure per the earlier plan-review decision), the Mt Elgon queue pull-quote cited to source 5, the four persona cards and the tying line from `presentation-copy.md` (lightly trimmed for card format, not rewritten), and a "Skip straight to the check" link. Verified live: no console errors, skip link scrolls to the checker, no horizontal overflow at 320px, persona grid collapses to one column under 560px.
+- `index.html`: the pull-quote shows "link pending" next to its citation whenever `engine.js`'s source 5 entry has an empty URL, same honesty rule as the sources ledger, computed from the data, not hardcoded.
+
+**What was deliberately left out, and why:** the headline is original copy for this screen, not a quotation attributed to *The Star*, inventing a headline and presenting it as a real news source's own words would be a fabricated citation, the one failure mode this product's entire design argues against. The scale figures in MILESTONES.md (103 NCPB depots, 281 last-mile points, 1,382 wards) are also not on this screen, none of the five sources' grounds cover those specific counts, so they were omitted rather than attached to a source that doesn't actually support them. See Decision Log 9 in FOUNDATION.md.
+
+**Still open:** source 5's real headline and URL, whenever Mailu has them; a citable source for the depot/ward figures, if one turns up, would strengthen this screen but isn't required for it.
+
+**Test:** see [TESTING.md, Step 3](TESTING.md#step-3-problem-screen).
 
 ---
 
