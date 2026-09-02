@@ -1,0 +1,38 @@
+# Codex UI review, 2 Sep 2026
+
+Run with `codex exec --sandbox read-only` against the repo plus four live screenshots (capture/v3-*.png). Verbatim output below; Victor's decisions on it go in tasks/wip.md.
+
+The visual system is coherent, but the product is still too polite where it needs to be decisive. It gives a proxy enough information to explain a result, but the clerk view does not earn two-second trust because the operative fact, date, and authority are buried under an ambiguous status and weak source provenance. The largest demo risk is not layout, it is presenting a reported 2025 price as a dependable counter price.
+
+| Before | After | Why |
+|---|---|---|
+| Counter starts with `CONDITIONAL` | Use a clerk decision line first: `DO NOT ISSUE TODAY` or `ISSUE TODAY`, then show the exact blocking record check | “Conditional” describes a state, not the action a clerk must take. The counter needs a binary instruction in two seconds. |
+| Counter says `Ksh 2,500 / bag` after the decision, with `reported Dec 2025` in 13px helper copy | Put `Reported price, not an official current tariff` directly above the figure, show source/date at 16px, and suppress “show this screen if charged more” until an official source exists | This is the confrontation screen. A weak, dated secondary source cannot carry the authority implied by a large price claim. |
+| Answer lead is “Conditional” then `Chebet R. · F-1046 → Highland...` | Add a plain-language action directly below: `Do not travel yet. First confirm land acreage and Sub-County approval.` | The farmer and proxy need the travel decision, not an internal classification. |
+| Answer card shows only the first failure plus `and 1 more` | Show every blocking item when there are two or fewer. Keep “and N more” only for long lists. | Sending someone to resolve acreage while hiding a second mandatory approval creates a failed trip. |
+| Bottom-sheet picker opens without a visible close control and touch users are deliberately not focused into search: `if(matchMedia(...)) $('sheet-search').focus();` | Add a 44px “Close” button, focus the dialog heading or search consistently, trap focus, return focus to the originating picker | It is visually clean but incomplete as a dialog. Keyboard and screen-reader users can escape behind it. |
+| Picker options use `role="listbox"` and buttons with `role="option"` | Use a normal button list, or implement full listbox keyboard behavior with `aria-activedescendant`, arrows, Home, End, and selected-result announcement | This is semantically halfway between two interaction patterns, so assistive technology gets the semantics without the expected behavior. |
+| `SW` and `EN` controls are `min-height:30px`; About is `min-height:36px` | Make every top-bar control at least 44 by 44px and add explicit names such as `Switch language to Swahili` | The smallest controls are exactly where users switch language or recover context. They miss the basic mobile touch target. |
+| Language mode is advertised as full Swahili while `SWAHILI_REVIEWED = false` | Hide the Swahili toggle for the demo, or label it `Swahili preview` until reviewed | An unreviewed language toggle is not a feature. In this product, a wrong translation can cause an unnecessary trip. |
+| The read-aloud action expands a bilingual script but does not play speech | Rename it `Read this to the farmer`, or add `speechSynthesis` with an explicit language choice and stop control | “Read this aloud” promises an action the app does not perform. The current feature is useful, but inaccurately named. |
+| Reduced motion changes verdict pop to another animation: `@media (prefers-reduced-motion: reduce){ .verdict.pop{ animation:fade 160ms ease; } }` | Set `animation: none`, remove smooth scrolling, and set all transitions to near-zero duration under reduced motion | Reduced motion means no meaningful motion, not a different animation. Also replace JS `behavior: 'smooth'` when reduced motion is active. |
+| Sheet movement is `260ms var(--ease-drawer)` and picker/button press scales to `.97` or `.985` | Keep the sheet at 220 to 260ms, but remove scaling from primary actions and use a colour or shadow press state | The drawer motion is appropriate. Scaling large controls looks decorative and can feel imprecise when someone is trying to complete a check quickly. |
+| Offline state is only a small `Offline` pill driven by `navigator.onLine` | Say `Saved on this phone. Sample data. Last updated with this app version.` and only show network status as secondary | `navigator.onLine` reports connectivity, not whether the requested resources are cached or current. The current label can create false confidence. |
+| Source links are tiny bracket-only targets, for example `cite.fn a` rendering `[3]` | Make each citation a 44px target with an accessible label such as `Open source 3: Digital Gatekeeper` | `[3]` has almost no meaning when read aloud and is too small to tap reliably. |
+
+| Before | After | Why |
+|---|---|---|
+| One `index.html` contains routing, state, rendering, accessibility behavior, share, install, and presentation content | Keep static HTML, but split into `app.js`, `render.js`, `router.js`, and `styles.css` | One file was a good hackathon start. It is now the highest-risk place to change because unrelated behaviours are coupled. |
+| Hash routes encode identities: `#answer/F-1046/D-03` | Keep hash routing for the demo, but validate routes centrally and treat IDs as demo-only public state | Hash routing is a two-way door and works offline, but it exposes selected records in shared URLs and allows invalid state to silently fall back. |
+| `remember()` runs whenever answer, counter, or detail renders | Record a check only when the user presses Check, and provide “Clear recent checks” | Merely opening a shared result mutates local history. That weakens the extension officer’s repeat workflow and removes user control. |
+| `localStorage` silently fails: `catch{}` | Show a non-blocking “This browser will not remember checks” state when storage is unavailable | Silent failure makes the remembered-pair promise unreliable, especially in private browsing or constrained webviews. |
+| `ussdText()` is shared, but web share appends a URL: `text + ' ' + url` | Define `shareText()` separately, or test the exact share payload against the product requirement | The claim that forwarded text and USSD are identical is false in the actual implementation. The shared formatter is good, but the contract is broken at the last line. |
+| Service worker says HTML is network-first and app files are stale-while-revalidate, despite the plan calling for cache-first static assets | Use a versioned cache-first app shell, then an explicit update prompt after a new worker is waiting | Network-first HTML can mix a newly fetched `index.html` with old cached modules. That can produce a broken app after deploy, precisely when offline reliability matters. |
+
+## Three things to do before the demo
+
+1. Replace the counter verdict with `ISSUE TODAY` or `DO NOT ISSUE TODAY`, then put the blocking reason, price provenance, and date in the first viewport.
+
+2. Remove or clearly mark the unreviewed Swahili toggle, and make the picker sheet a complete accessible dialog with a close button and 44px controls.
+
+3. Stop presenting Ksh 2,500 as a counter-enforceable fact until you have an official, current source. If you cannot get one, label it as a reported figure and make the demo about status clarity, not price enforcement.

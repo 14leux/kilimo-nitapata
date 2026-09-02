@@ -46,8 +46,8 @@ See [PROGRESS.md, Step 7a](PROGRESS.md#step-7a-milestone-b-location--gps-depot-s
 
 **Build steps:**
 1. ~~Extract the rule engine into a shared module.~~ Done, see `engine.js`.
-2. Add a `ussdText(result)` formatter to `engine.js` that renders a verdict as plain text within the roughly 140-160 characters a USSD screen actually fits: the verdict word, the single most important missing item, and the price. Test it for every pair: never over the character budget, never an em dash.
-3. Create `api/ussd.js`, a Vercel serverless function with a single POST handler implementing the CON/END protocol. Menu tree: welcome, pick a sample farmer, pick a depot, show `ussdText`. Parse the accumulated `text` field on `*`.
+2. ~~Add a `ussdText(result)` formatter~~ Done 2 Sep, `engine.js`, tested for every pair. Add a `ussdText(result)` formatter to `engine.js` that renders a verdict as plain text within the roughly 140-160 characters a USSD screen actually fits: the verdict word, the single most important missing item, and the price. Test it for every pair: never over the character budget, never an em dash.
+3. ~~Create `api/ussd.js`~~ Done 2 Sep: `ussd.js` holds the menu, `api/ussd.js` the HTTP handler, `test/ussd.test.js` checks every screen fits and every verdict matches the web app. Create `api/ussd.js`, a Vercel serverless function with a single POST handler implementing the CON/END protocol. Menu tree: welcome, pick a sample farmer, pick a depot, show `ussdText`. Parse the accumulated `text` field on `*`.
 4. Sign up for the Africa's Talking sandbox, note the test shortcode, and point the callback setting at the deployed Vercel URL (or a tunnel to `vercel dev` for local iteration).
 5. Run the full flow in the built-in simulator for every sample farmer and depot pair already in the web app.
 

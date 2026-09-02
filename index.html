@@ -1,46 +1,856 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kilimo, Nitapata? | Check. Confirm. Plan.</title>
-  <meta name="description" content="Check a sample farmer's fertilizer e-Voucher readiness, see what may be missing, and review published price information.">
-  <style>
-    :root{--forest:#063f2a;--forest2:#0b5137;--leaf:#45a922;--leafsoft:#eaf7e4;--sun:#f5b940;--cream:#f8f7f1;--surface:#fff;--ink:#17231d;--muted:#5d6b63;--line:#d9e2dc;--danger:#a23a32;--dangersoft:#fcedeb;--warn:#805506;--warnsoft:#fff6dd;--shadow:0 18px 50px rgba(6,63,42,.1)}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,select{font:inherit}button,a,select{-webkit-tap-highlight-color:transparent}button:focus-visible,select:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--sun);outline-offset:3px}a{color:var(--forest2)}.shell{width:min(1120px,calc(100% - 32px));margin:0 auto}
-    .topbar{background:var(--forest);color:#fff}.topbar-inner{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:12px;min-width:0}.brand-mark{width:56px;height:56px;object-fit:cover;border-radius:14px;background:#fff;border:2px solid rgba(255,255,255,.8)}.brand-name{display:block;font-size:19px;font-weight:800;line-height:1.1}.brand-tag{display:block;margin-top:3px;color:#cde5d6;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.top-link{color:#fff;font-weight:700;text-decoration:none;white-space:nowrap}
-    .hero{padding:48px 0 32px}.hero-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:start}.eyebrow{color:var(--forest2);font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}h1{margin:10px 0 16px;font-size:clamp(38px,5vw,68px);line-height:1.02;letter-spacing:-.045em}h1 span{color:var(--leaf)}.hero-copy{margin:0;max-width:560px;color:var(--muted);font-size:19px}.trust-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}.trust-chip{padding:8px 11px;border:1px solid #c5d5ca;border-radius:999px;background:rgba(255,255,255,.65);font-size:13px;font-weight:700}
-    .checker{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow)}.checker h2{margin:0;font-size:25px;line-height:1.2}.checker-intro{margin:7px 0 20px;color:var(--muted)}.demo-note{display:flex;gap:10px;margin-bottom:20px;padding:12px 14px;background:var(--warnsoft);border:1px solid #ecd899;border-radius:12px;color:#684708;font-size:14px}.demo-note svg{flex:0 0 auto;margin-top:2px}.field{margin-bottom:16px}.field label{display:block;margin-bottom:7px;font-size:14px;font-weight:750}select{width:100%;min-height:50px;padding:0 42px 0 14px;border:1px solid #b9c8bf;border-radius:12px;background:#fff;color:var(--ink)}.location-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-3px 0 18px}.text-button{border:0;padding:8px 0;background:transparent;color:var(--forest2);font-size:14px;font-weight:750;cursor:pointer}.location-status{color:var(--muted);font-size:13px;text-align:right}.location-status.error{color:var(--danger)}.primary{width:100%;min-height:52px;border:0;border-radius:13px;background:var(--forest);color:#fff;font-weight:800;cursor:pointer;transition:transform .15s ease,background .15s ease}.primary:hover{background:var(--forest2);transform:translateY(-1px)}
-    .result-wrap{padding:8px 0 64px}.empty-result{padding:32px;border:1px dashed #aebfb4;border-radius:20px;color:var(--muted);text-align:center}.result{display:none}.result.visible{display:block}.result-card{overflow:hidden;border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--shadow)}.result-head{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:24px;background:var(--leafsoft)}.result-card.warn .result-head{background:var(--warnsoft)}.result-card.danger .result-head{background:var(--dangersoft)}.state-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:50%;background:var(--forest);color:#fff;font-size:25px;font-weight:900}.warn .state-icon{background:var(--warn)}.danger .state-icon{background:var(--danger)}.state-label{margin:0 0 3px;color:var(--forest);font-size:13px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}.warn .state-label{color:var(--warn)}.danger .state-label{color:var(--danger)}.result-title{margin:0;font-size:clamp(23px,3vw,32px);line-height:1.15}.result-who{margin-top:5px;color:var(--muted);font-size:14px}.share-button{min-height:44px;padding:0 15px;border:1px solid var(--forest);border-radius:11px;background:transparent;color:var(--forest);font-weight:800;cursor:pointer}.result-body{display:grid;grid-template-columns:1.25fr .75fr}.decision{padding:26px}.decision>p{margin:0 0 20px;color:var(--muted);font-size:17px}.next-step{padding:18px;border-radius:14px;background:#f3f7f4}.next-step h3{margin:0 0 5px;font-size:16px}.next-step p{margin:0;color:var(--muted)}.evidence{padding:26px;border-left:1px solid var(--line);background:#fbfcfb}.evidence h3{margin:0 0 14px;font-size:16px}.evidence-row{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}.evidence-row span:first-child{color:var(--muted)}.evidence-row strong{text-align:right}.unknown{color:var(--warn)}.result-details{border-top:1px solid var(--line)}details{border-bottom:1px solid var(--line)}details:last-child{border-bottom:0}summary{padding:18px 26px;font-weight:800;cursor:pointer}.detail-body{padding:0 26px 22px}.check-list{display:grid;gap:10px}.check-item{display:grid;grid-template-columns:26px 1fr;gap:10px;padding:13px;border-radius:12px;background:#f6f8f6}.check-item.fail{background:var(--dangersoft)}.check-mark{font-weight:900;color:var(--forest2)}.fail .check-mark{color:var(--danger)}.check-item small{display:block;margin-top:3px;color:var(--muted)}.price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.price{padding:16px;border:1px solid var(--line);border-radius:14px}.price strong{display:block;margin:4px 0;font-size:22px}.price small{color:var(--muted)}.price-warning{margin:14px 0 0;padding:13px;background:var(--warnsoft);border-radius:12px;color:#684708}.source-list{display:grid;gap:12px}.source{padding:14px;border:1px solid var(--line);border-radius:12px}.source-top{display:flex;align-items:start;justify-content:space-between;gap:12px}.source-title{font-weight:800}.source-meta{margin-top:3px;color:var(--muted);font-size:13px}.source-status{flex:0 0 auto;padding:4px 8px;border-radius:999px;background:var(--warnsoft);color:var(--warn);font-size:11px;font-weight:850;text-transform:uppercase}.source-status.official{background:var(--leafsoft);color:var(--forest)}
-    .about{padding:64px 0;background:#ecf2ee}.about-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px}.about h2{margin:8px 0 12px;font-size:34px;line-height:1.12}.about p{color:var(--muted)}.boundaries{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.boundary{padding:18px;border-radius:16px;background:#fff}.boundary strong{display:block;margin-bottom:5px}.boundary p{margin:0;font-size:14px}footer{padding:26px 0;background:var(--forest);color:#cde5d6;font-size:13px}footer .shell{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-    dialog{width:min(560px,calc(100% - 28px));padding:0;border:0;border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.25)}dialog::backdrop{background:rgba(6,30,21,.7)}.counter{padding:24px}.counter-logo{width:110px;display:block;margin-bottom:16px}.counter h2{margin:0;font-size:29px}.counter p{color:var(--muted)}.counter-warning{padding:14px;border-radius:12px;background:var(--warnsoft);color:#684708}.close-button{width:100%;min-height:48px;margin-top:18px;border:0;border-radius:12px;background:var(--forest);color:#fff;font-weight:800;cursor:pointer}
-    @media(max-width:820px){.hero{padding-top:30px}.hero-grid,.about-grid{grid-template-columns:1fr;gap:28px}.hero-copy{font-size:17px}.result-head{grid-template-columns:auto 1fr}.share-button{grid-column:1/-1;width:100%}.result-body{grid-template-columns:1fr}.evidence{border-left:0;border-top:1px solid var(--line)}.boundaries{grid-template-columns:1fr}}@media(max-width:520px){.shell{width:min(100% - 24px,1120px)}.topbar-inner{min-height:68px}.brand-mark{width:46px;height:46px;border-radius:11px}.brand-tag,.top-link{font-size:11px}h1{font-size:42px}.checker{padding:18px;border-radius:18px}.trust-row{display:grid}.result-head,.decision,.evidence{padding:19px}.state-icon{width:44px;height:44px}summary{padding:17px 19px}.detail-body{padding:0 19px 19px}.price-grid{grid-template-columns:1fr}.location-row{align-items:start;flex-direction:column}.location-status{text-align:left}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kilimo, Nitapata?</title>
+<meta name="description" content="Will the depot serve him, what is he still missing, and what does the bag cost. A citation-backed status check for Kenya's fertilizer e-Voucher scheme.">
+<meta name="theme-color" content="#F3F7F1">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nitapata?">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#F3F7F1;
+    --surface:#FFFFFF;
+    --surface-2:#E8EFE4;
+    --ink:#14211A;
+    --ink-2:#4B5B51;
+    --ink-3:#7E8C83;
+    --line:#D7E1D3;
+    --primary:#2E7D4F;
+    --primary-deep:#1F5C3A;
+    --primary-ink:#FFFFFF;
+    --sun:#F2B233;
+    --soil:#8C5A2B;
+    --ok:#1F7A45;      --ok-bg:#DCF3E4;
+    --warn:#9A5A0E;    --warn-bg:#FCEBCF;
+    --danger:#B23A31;  --danger-bg:#FADEDB;
+    --focus:#2E7BD6;
+    --radius:20px;
+    --radius-s:14px;
+    --shadow:0 1px 2px rgba(20,33,26,.05), 0 10px 30px rgba(20,33,26,.08);
+    --ease-out:cubic-bezier(.23,1,.32,1);
+    --ease-drawer:cubic-bezier(.32,.72,0,1);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F1613; --surface:#18221C; --surface-2:#223028;
+      --ink:#EEF4EF; --ink-2:#B3C2B8; --ink-3:#7C8B82; --line:#2E3C34;
+      --primary:#4FB27A; --primary-deep:#3B9463; --primary-ink:#0B1A11;
+      --ok:#6FD394; --ok-bg:#173324; --warn:#E8A94F; --warn-bg:#3A2A12; --danger:#F0847A; --danger-bg:#3D1F1C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F1613; --surface:#18221C; --surface-2:#223028;
+    --ink:#EEF4EF; --ink-2:#B3C2B8; --ink-3:#7C8B82; --line:#2E3C34;
+    --primary:#4FB27A; --primary-deep:#3B9463; --primary-ink:#0B1A11;
+    --ok:#6FD394; --ok-bg:#173324; --warn:#E8A94F; --warn-bg:#3A2A12; --danger:#F0847A; --danger-bg:#3D1F1C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size:17px; line-height:1.5; font-weight:500;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; }
+  button{ font:inherit; color:inherit; }
+  h1,h2,h3{ margin:0; font-weight:800; text-wrap:balance; letter-spacing:-.02em; }
+  .mono{ font-family:'JetBrains Mono', ui-monospace, monospace; }
+  .tab-nums{ font-variant-numeric:tabular-nums; }
+  :focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
+  [hidden]{ display:none !important; }
+
+  /* Top bar */
+  .topbar{
+    position:sticky; top:0; z-index:10;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+    background:color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  }
+  .brand{ display:flex; align-items:center; gap:8px; text-decoration:none; font-weight:800; font-size:17px; letter-spacing:-.01em; }
+  .brand img{ width:34px; height:34px; border-radius:8px; object-fit:cover; background:#fff; }
+  .brand span{ color:var(--primary); }
+  .topbar-actions{ display:flex; gap:8px; align-items:center; }
+  .lang{ display:inline-flex; border-radius:999px; background:var(--surface-2); padding:3px; }
+  .lang button{
+    border:0; background:transparent; padding:5px 12px; font-size:13px; font-weight:700; color:var(--ink-2); cursor:pointer; min-height:30px; border-radius:999px;
+    transition:background 160ms var(--ease-out), color 160ms var(--ease-out);
+  }
+  .lang button[aria-pressed="true"]{ background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .link-btn{
+    background:var(--surface-2); border:0; border-radius:999px; padding:8px 14px; font-size:13px; font-weight:700; color:var(--ink-2); text-decoration:none; min-height:36px; display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+  }
+  .link-btn:disabled{ opacity:.6; cursor:default; }
+  .locate{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:8px; }
+  .offline-pill{ font-size:12px; padding:4px 10px; border-radius:999px; background:var(--warn-bg); color:var(--warn); font-weight:700; }
+
+  /* Layout */
+  .screen{ max-width:640px; margin:0 auto; padding:8px 16px calc(100px + env(safe-area-inset-bottom)); }
+  .eyebrow{ font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); margin-bottom:6px; }
+  .lede{ color:var(--ink-2); margin:6px 0 0; font-size:16px; }
+  .card{ background:var(--surface); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); }
+  .stack > * + *{ margin-top:16px; }
+  .muted{ color:var(--ink-2); }
+  .small{ font-size:14px; }
+  .tiny{ font-size:12.5px; color:var(--ink-3); }
+
+  /* Hero illustration */
+  .hero{ position:relative; border-radius:var(--radius); overflow:hidden; background:var(--surface); padding:20px 18px 0; box-shadow:var(--shadow); }
+  :root[data-theme="dark"] .hero, :root:not([data-theme="light"]) .hero{ }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .hero{ background:linear-gradient(180deg, #1C3326 0%, #16291E 100%); } }
+  :root[data-theme="dark"] .hero{ background:linear-gradient(180deg, #1C3326 0%, #16291E 100%); }
+  .hero h1{ font-size:clamp(28px, 7.5vw, 38px); line-height:1.05; position:relative; z-index:1; max-width:18ch; }
+  .hero .lede{ position:relative; z-index:1; max-width:30ch; margin-top:8px; }
+  .hero svg{ display:block; width:100%; height:auto; margin-top:6px; }
+  .hero-art{ color:var(--primary-deep); opacity:.9; }
+  .hero-art .sun{ stroke:var(--sun); }
+  .hero-art .cob{ fill:color-mix(in srgb, var(--sun) 40%, transparent); stroke:var(--sun); }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .hero-art{ color:var(--primary); } }
+  :root[data-theme="dark"] .hero-art{ color:var(--primary); }
+
+  /* Pickers (searchable) */
+  .field-label{ font-weight:700; font-size:15px; margin:0 0 8px; display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .field-label small{ font-weight:600; color:var(--ink-3); font-size:12.5px; }
+  .picker{
+    display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+    background:var(--surface); border:0; border-radius:var(--radius-s);
+    padding:14px 16px; min-height:64px; cursor:pointer; box-shadow:var(--shadow);
+    transition:transform 160ms var(--ease-out);
+  }
+  .picker:active{ transform:scale(.985); }
+  .picker .ic{ width:40px; height:40px; border-radius:12px; background:var(--surface-2); display:grid; place-items:center; flex:none; color:var(--primary); }
+  .picker .ic svg{ width:22px; height:22px; }
+  .picker .t{ flex:1; min-width:0; }
+  .picker .t b{ display:block; font-weight:700; font-size:16.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .picker .t span{ display:block; color:var(--ink-3); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .picker .chev{ color:var(--ink-3); flex:none; }
+  .picker.empty .t b{ color:var(--ink-3); font-weight:600; }
+
+  /* Sheet */
+  .sheet-backdrop{ position:fixed; inset:0; background:rgba(10,20,14,.45); z-index:30; opacity:0; transition:opacity 220ms var(--ease-out); }
+  .sheet-backdrop.open{ opacity:1; }
+  .sheet{
+    position:fixed; left:0; right:0; bottom:0; z-index:31; max-height:88vh; max-height:88dvh;
+    background:var(--surface); border-radius:24px 24px 0 0; box-shadow:0 -10px 40px rgba(0,0,0,.18);
+    transform:translateY(100%); transition:transform 260ms var(--ease-drawer);
+    display:flex; flex-direction:column; padding-bottom:env(safe-area-inset-bottom);
+  }
+  .sheet.open{ transform:translateY(0); }
+  @media (min-width:640px){
+    .sheet{ left:50%; right:auto; width:560px; transform:translate(-50%, 100%); }
+    .sheet.open{ transform:translate(-50%, 0); }
+  }
+  .sheet .grip{ width:40px; height:4px; border-radius:2px; background:var(--line); margin:10px auto 4px; }
+  .sheet .head{ padding:8px 16px 10px; }
+  .sheet .head h3{ font-size:17px; margin-bottom:10px; }
+  .search{ position:relative; }
+  .search svg{ position:absolute; left:14px; top:50%; transform:translateY(-50%); width:18px; height:18px; color:var(--ink-3); pointer-events:none; }
+  .search input{
+    width:100%; border:0; background:var(--surface-2); border-radius:12px; padding:0 14px 0 42px; min-height:50px; font:inherit; font-size:16px; color:var(--ink);
+    outline:none;
+  }
+  .search input:focus{ box-shadow:0 0 0 3px color-mix(in srgb, var(--primary) 30%, transparent); }
+  .sheet .list{ overflow:auto; padding:4px 8px 12px; -webkit-overflow-scrolling:touch; }
+  .sheet .grp{ padding:12px 8px 4px; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-weight:700; }
+  .opt{
+    display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+    background:transparent; border:0; border-radius:12px; padding:10px 10px; min-height:56px; cursor:pointer;
+    transition:background 120ms var(--ease-out), transform 120ms var(--ease-out);
+  }
+  .opt:active{ transform:scale(.985); }
+  @media (hover:hover) and (pointer:fine){ .opt:hover{ background:var(--surface-2); } }
+  .opt[aria-selected="true"]{ background:color-mix(in srgb, var(--primary) 10%, transparent); }
+  .opt .av{ width:40px; height:40px; border-radius:50%; background:var(--surface-2); display:grid; place-items:center; font-weight:800; font-size:14px; color:var(--primary-deep); flex:none; }
+  .opt[aria-selected="true"] .av{ background:var(--primary); color:var(--primary-ink); }
+  .opt .t{ flex:1; min-width:0; }
+  .opt .t b{ display:block; font-weight:700; font-size:16px; }
+  .opt .t span{ display:block; color:var(--ink-3); font-size:13px; }
+  .opt .t mark{ background:transparent; color:var(--primary); font-weight:800; }
+  .opt .badge{ font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 8px; border-radius:999px; background:var(--surface-2); color:var(--ink-2); flex:none; }
+  .opt .badge.danger{ background:var(--danger-bg); color:var(--danger); }
+  .empty-state{ padding:24px 12px; text-align:center; color:var(--ink-3); font-size:14.5px; }
+
+  /* Sticky CTA */
+  .cta-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:9;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    background:linear-gradient(to top, var(--bg) 70%, transparent);
+  }
+  .cta-bar .inner{ max-width:640px; margin:0 auto; }
+  .btn{
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+    border:0; border-radius:16px; padding:0 18px; min-height:58px; font-size:17px; font-weight:800; cursor:pointer;
+    transition:transform 160ms var(--ease-out), background 160ms var(--ease-out);
+  }
+  .btn:active{ transform:scale(.97); }
+  .btn.primary{ background:var(--primary); color:var(--primary-ink); box-shadow:0 8px 20px color-mix(in srgb, var(--primary) 30%, transparent); }
+  .btn.primary:active{ background:var(--primary-deep); }
+  .btn.secondary{ background:var(--surface); color:var(--ink); box-shadow:var(--shadow); }
+  .btn.ghost{ background:transparent; color:var(--ink-2); min-height:48px; font-weight:700; }
+  .btn.sm{ min-height:52px; font-size:15px; }
+  .btn-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:380px){ .btn-grid{ grid-template-columns:1fr; } }
+
+  /* Recent */
+  .recent-row{ display:flex; gap:10px; overflow-x:auto; padding:2px 2px 6px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+  .recent-row::-webkit-scrollbar{ display:none; }
+  .recent{
+    display:flex; flex-direction:column; gap:8px; text-align:left; flex:0 0 200px; scroll-snap-align:start;
+    background:var(--surface); border:0; border-radius:var(--radius-s); padding:12px; min-height:84px; cursor:pointer; box-shadow:var(--shadow);
+    transition:transform 160ms var(--ease-out);
+  }
+  .recent:active{ transform:scale(.97); }
+  .pill{ font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; padding:4px 9px; border-radius:999px; align-self:flex-start; }
+  .pill.ok{ background:var(--ok-bg); color:var(--ok); }
+  .pill.warn{ background:var(--warn-bg); color:var(--warn); }
+  .pill.danger{ background:var(--danger-bg); color:var(--danger); }
+  .recent .t{ font-size:14.5px; font-weight:700; line-height:1.3; }
+  .recent .t span{ display:block; color:var(--ink-3); font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* Answer */
+  .verdict{ border-radius:var(--radius); padding:24px 20px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+  .verdict.ok{ background:var(--ok-bg); color:var(--ok); }
+  .verdict.warn{ background:var(--warn-bg); color:var(--warn); }
+  .verdict.danger{ background:var(--danger-bg); color:var(--danger); }
+  .verdict .word{ font-size:clamp(30px, calc((100vw - 72px) / var(--chars, 8) / .62), 50px); font-weight:800; line-height:1; letter-spacing:-.03em; }
+  .verdict .word-alt{ font-size:18px; font-weight:700; opacity:.85; margin-top:6px; }
+  .verdict .who{ margin-top:16px; font-size:15px; color:var(--ink); opacity:.9; font-weight:600; }
+  .verdict .who b{ font-weight:800; }
+  .verdict .mark{ position:absolute; right:-6px; top:-6px; width:110px; height:110px; opacity:.16; }
+  .verdict.pop{ animation:pop 220ms var(--ease-out); }
+  @keyframes pop{ from{ transform:scale(.97); opacity:.5; } to{ transform:scale(1); opacity:1; } }
+  @media (prefers-reduced-motion: reduce){ .verdict.pop{ animation:fade 160ms ease; } @keyframes fade{ from{ opacity:.5 } to{ opacity:1 } } }
+
+  .kv{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:12px 0; border-top:1px solid var(--line); }
+  .kv:first-child{ border-top:0; padding-top:0; }
+  .kv .k{ color:var(--ink-2); font-size:14px; font-weight:600; }
+  .kv .v{ font-weight:800; text-align:right; white-space:nowrap; }
+  .kv .k{ flex:1; }
+  .block{ border-left:4px solid var(--warn); background:var(--warn-bg); border-radius:0 var(--radius-s) var(--radius-s) 0; padding:12px 14px; margin-bottom:12px; }
+  .block.danger{ border-color:var(--danger); background:var(--danger-bg); }
+  .block .lbl{ font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:800; color:var(--ink-2); margin-bottom:4px; }
+  .block .txt{ font-weight:800; }
+  .block .more{ font-size:13.5px; color:var(--ink-2); margin-top:4px; font-weight:600; }
+  cite.fn{ font-style:normal; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink-3); margin-left:6px; white-space:nowrap; }
+  cite.fn a{ text-decoration:none; padding:8px 3px; margin:-8px -3px; }
+
+  .script{ background:var(--surface-2); border-radius:var(--radius-s); padding:14px; }
+  .script p{ margin:0; }
+  .script p + p{ margin-top:10px; }
+  .script .sw{ font-weight:800; }
+  .script .en{ color:var(--ink-2); font-size:15px; }
+
+  /* Counter view */
+  .counter{ background:var(--surface); border-radius:var(--radius); padding:28px 22px; box-shadow:var(--shadow); }
+  .counter .eyebrow{ margin-bottom:12px; }
+  .counter .word{ font-size:clamp(30px, calc((100vw - 76px) / var(--chars, 8) / .78), 76px); font-weight:800; line-height:1; letter-spacing:-.03em; text-wrap:balance; }
+  @media (min-width:640px){ .counter .word{ font-size:clamp(30px, calc(560px / var(--chars, 8) / .78), 76px); } }
+  .counter .word.ok{ color:var(--ok); } .counter .word.warn{ color:var(--warn); } .counter .word.danger{ color:var(--danger); }
+  .counter .who{ margin-top:12px; font-size:19px; font-weight:800; }
+  .counter .headline{ margin-top:10px; font-size:18px; line-height:1.4; }
+  .counter .price{ margin-top:16px; font-size:32px; font-weight:800; }
+  .counter .price small{ display:block; font-size:13px; color:var(--ink-2); font-weight:600; }
+  .counter .srcs{ margin-top:14px; font-size:13.5px; color:var(--ink-2); }
+  .counter .srcs div{ margin-top:4px; }
+  .counter .note{ margin-top:16px; font-size:12.5px; color:var(--ink-3); border-top:1px dashed var(--line); padding-top:10px; }
+
+  /* Detail */
+  .ledger{ display:flex; flex-direction:column; }
+  .lrow{ display:grid; grid-template-columns:28px 1fr auto; gap:10px; align-items:start; padding:12px 0; border-top:1px solid var(--line); }
+  .lrow:first-child{ border-top:0; padding-top:0; }
+  .lrow .mark{ width:24px; height:24px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:13px; }
+  .lrow.pass .mark{ background:var(--ok-bg); color:var(--ok); }
+  .lrow.fail .mark{ background:var(--danger-bg); color:var(--danger); }
+  .lrow .desc{ font-size:15.5px; font-weight:600; }
+  .lrow .desc span{ color:var(--ink-3); font-size:13.5px; font-weight:500; }
+  .src{ display:grid; grid-template-columns:32px 1fr; gap:8px; padding:12px 0; border-top:1px solid var(--line); }
+  .src:first-child{ border-top:0; padding-top:0; }
+  .src .n{ font-family:'JetBrains Mono',monospace; color:var(--ink-3); font-size:13px; }
+  .src .title{ font-weight:700; font-size:15px; }
+  .src .meta{ color:var(--ink-3); font-size:13px; }
+  .src .grounds{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .src .grounds span{ font-size:12px; background:var(--surface-2); padding:3px 8px; border-radius:6px; color:var(--ink-2); font-weight:600; }
+  .pending{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--warn); margin-left:6px; }
+  details.how summary{ cursor:pointer; font-weight:800; }
+  details.how p{ color:var(--ink-2); font-size:15px; }
+
+  /* About */
+  .about-head{ font-size:clamp(28px, 7vw, 36px); line-height:1.1; }
+  blockquote.pq{ margin:16px 0 0; padding:14px 16px; border-left:4px solid var(--sun); background:var(--surface); border-radius:0 var(--radius-s) var(--radius-s) 0; }
+  blockquote.pq p{ margin:0; font-size:19px; font-weight:800; line-height:1.3; }
+  blockquote.pq cite{ display:block; margin-top:8px; font-style:normal; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-3); }
+  .persona h3{ font-size:16px; }
+  .persona p{ margin:4px 0 0; color:var(--ink-2); font-size:15px; }
+  .scope-list{ display:flex; flex-direction:column; gap:8px; }
+  .scope-list div{ font-size:14.5px; color:var(--ink-2); }
+  .scope-list b{ color:var(--danger); font-size:11px; letter-spacing:.06em; text-transform:uppercase; margin-right:6px; }
+
+  footer{ margin-top:36px; font-size:12.5px; color:var(--ink-3); display:flex; flex-direction:column; gap:4px; }
+  .toast{ position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:10px 16px; border-radius:999px; font-size:14px; font-weight:700; box-shadow:var(--shadow); z-index:40;
+    transition:opacity 200ms var(--ease-out), transform 200ms var(--ease-out); }
+  .toast{ @starting-style{ opacity:0; transform:translate(-50%, 8px); } }
+</style>
 </head>
 <body>
-  <header class="topbar"><div class="shell topbar-inner"><div class="brand"><img class="brand-mark" src="assets/kilimo-nitapata-logo.jpeg" alt="Kilimo, Nitapata? logo"><div><span class="brand-name">Kilimo, Nitapata?</span><span class="brand-tag">Check · Confirm · Plan</span></div></div><a class="top-link" href="#about">About this demo</a></div></header>
-  <main>
-    <section class="hero"><div class="shell hero-grid">
-      <div><div class="eyebrow">Fertilizer e-Voucher readiness</div><h1>Know before<br><span>you travel.</span></h1><p class="hero-copy">Check whether a sample farmer appears ready to redeem fertilizer, see what may be missing, and review published price information.</p><div class="trust-row" aria-label="Product boundaries"><span class="trust-chip">No payments</span><span class="trust-chip">No marketplace</span><span class="trust-chip">Sources shown</span></div></div>
-      <form class="checker" id="checker" novalidate><h2>Check readiness</h2><p class="checker-intro">Choose a sample farmer and a depot.</p><div class="demo-note" role="note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5m0 3.5v.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span><strong>Demo only.</strong> Uses sample records and published information. It cannot confirm live stock or final depot approval.</span></div><div class="field"><label for="farmer-select">Sample farmer</label><select id="farmer-select" required><option value="">Choose a farmer</option></select></div><div class="field"><label for="depot-select">Depot or redemption point</label><select id="depot-select" required><option value="">Choose a depot</option></select></div><div class="location-row"><button class="text-button" id="location-button" type="button">Use my location</button><span class="location-status" id="location-status" aria-live="polite"></span></div><button class="primary" type="submit">Check readiness</button></form>
-    </div></section>
-    <section class="result-wrap shell" aria-label="Readiness result"><div class="empty-result" id="empty-result">Your result will appear here after you choose a farmer and depot.</div><article class="result-card result" id="result-card" tabindex="-1" aria-live="polite"><div class="result-head"><div class="state-icon" id="state-icon" aria-hidden="true">✓</div><div><p class="state-label" id="state-label"></p><h2 class="result-title" id="result-title"></h2><div class="result-who" id="result-who"></div></div><button class="share-button" id="counter-button" type="button">Show summary</button></div><div class="result-body"><div class="decision"><p id="result-reason"></p><div class="next-step"><h3>What to do next</h3><p id="next-step"></p></div></div><aside class="evidence" aria-label="Evidence status"><h3>What this result knows</h3><div class="evidence-row"><span>Farmer record</span><strong>Sample data</strong></div><div class="evidence-row"><span>Depot listing</span><strong>Published sources</strong></div><div class="evidence-row"><span>Stock today</span><strong class="unknown">Unknown</strong></div><div class="evidence-row"><span>Final approval</span><strong class="unknown">Unknown</strong></div></aside></div><div class="result-details"><details id="requirements-details" open><summary id="requirements-summary">Requirements</summary><div class="detail-body"><div class="check-list" id="check-list"></div></div></details><details><summary>Published price information</summary><div class="detail-body"><div class="price-grid" id="price-grid"></div><p class="price-warning">Published reports show different figures from different years. Confirm the depot's posted price before travelling. This demo does not verify today's price.</p></div></details><details><summary>Sources and confidence</summary><div class="detail-body"><div class="source-list" id="source-list"></div></div></details></div></article></section>
-    <section class="about" id="about"><div class="shell about-grid"><div><div class="eyebrow">About this demo</div><h2>A readiness explainer, not a live government service.</h2><p>The prototype shows how a farmer or family member could understand record requirements, depot verification and conflicting price evidence before making a trip.</p></div><div class="boundaries"><div class="boundary"><strong>What it checks</strong><p>Sample farmer requirements and a static list of demonstration depots.</p></div><div class="boundary"><strong>What it cannot know</strong><p>Live stock, opening hours, current voucher validity or final depot approval.</p></div><div class="boundary"><strong>What it never does</strong><p>No buying, selling, agronomic advice or movement of money.</p></div></div></div></section>
-  </main>
-  <footer><div class="shell"><span>Claude Impact Lab · Nairobi</span><span>Not affiliated with the Ministry of Agriculture, KIAMIS or NCPB.</span></div></footer>
-  <dialog id="counter-dialog" aria-labelledby="counter-title"><div class="counter"><img class="counter-logo" src="assets/kilimo-nitapata-logo.jpeg" alt=""><p class="state-label" id="counter-label"></p><h2 id="counter-title"></h2><p id="counter-who"></p><p id="counter-reason"></p><div class="counter-warning"><strong>Important:</strong> Sample data only. Stock, final approval and today's price are not verified. Published price reports conflict: Ksh 2,500 (2025) and Ksh 3,500 (2023).</div><button class="close-button" id="close-dialog" type="button">Back to full result</button></div></dialog>
-  <script type="module">
-    import{FARMERS,DEPOTS,PRICES,SOURCES,evaluate,nearestDepots}from'./engine.js';
-    const $=id=>document.getElementById(id),farmerSelect=$('farmer-select'),depotSelect=$('depot-select'),resultCard=$('result-card'),emptyResult=$('empty-result');let currentResult=null;
-    FARMERS.forEach(f=>farmerSelect.add(new Option(`${f.name} · ${f.id} · ${f.county}`,f.id)));DEPOTS.forEach(d=>depotSelect.add(new Option(`${d.name} · ${d.county}`,d.id)));
-    const sourceType=s=>s.pub.includes('kenyanews.go.ke')?['Government publisher','official']:['Secondary report',''];
-    $('price-grid').innerHTML=PRICES.map(p=>`<div class="price"><small>${p.label}</small><strong>${p.amount}</strong><small>${p.note} · Source ${p.src.join(', ')}</small></div>`).join('');
-    $('source-list').innerHTML=SOURCES.filter(s=>s.url).map(s=>{const[l,c]=sourceType(s);return`<div class="source"><div class="source-top"><div><a class="source-title" href="${s.url}" target="_blank" rel="noopener">${s.title}</a><div class="source-meta">${s.pub}</div></div><span class="source-status ${c}">${l}</span></div></div>`}).join('');
-    function stateFor(f,d,r){if(!d.authorized)return{tone:'danger',icon:'×',label:'Depot not verified',title:'Choose a verified redemption point',next:'Select a depot listed as an authorised redemption point. Confirm its stock and opening status before travelling.'};if(!f.registered)return{tone:'danger',icon:'×',label:'Registration missing',title:'Readiness cannot be confirmed',next:'Confirm registration through an official county or KIAMIS channel before travelling. This demo does not provide a verified registration route.'};if(r.gaps.some(g=>g.key==='withinLimit'))return{tone:'warn',icon:'!',label:'Allocation used up',title:'No bags remain in this sample allocation',next:'Confirm the applicable allocation period through an official channel before travelling.'};if(r.gaps.length)return{tone:'warn',icon:'!',label:'Action required',title:`${r.gaps.length} record ${r.gaps.length===1?'item needs':'items need'} attention`,next:'Review the missing items below and confirm them through an official channel before travelling.'};return{tone:'ok',icon:'✓',label:'Ready based on sample record',title:'No documented blocker found',next:'Confirm live stock, opening hours and the posted price with the depot before travelling.'}}
-    function invalidate(){currentResult=null;resultCard.className='result-card result';emptyResult.hidden=false;emptyResult.textContent=farmerSelect.value||depotSelect.value?'Selections changed. Check readiness to get an updated result.':'Your result will appear here after you choose a farmer and depot.'}farmerSelect.addEventListener('change',invalidate);depotSelect.addEventListener('change',invalidate);
-    $('checker').addEventListener('submit',e=>{e.preventDefault();if(!farmerSelect.value||!depotSelect.value){emptyResult.hidden=false;emptyResult.textContent='Choose both a sample farmer and a depot to continue.';(!farmerSelect.value?farmerSelect:depotSelect).focus();return}const f=FARMERS.find(x=>x.id===farmerSelect.value),d=DEPOTS.find(x=>x.id===depotSelect.value),r=evaluate(f,d),s=stateFor(f,d,r);currentResult={farmer:f,depot:d,result:r,state:s};resultCard.className=`result-card result visible ${s.tone}`;emptyResult.hidden=true;$('state-icon').textContent=s.icon;$('state-label').textContent=s.label;$('result-title').textContent=s.title;$('result-who').textContent=`${f.name} (${f.id}) · ${d.name}`;$('result-reason').textContent=r.verdict==='ok'?`${d.name} is listed as a redemption point and this sample record has no failed requirement. This is not confirmation that the depot can serve the farmer today.`:r.reason.text.replace(/would serve|can issue|can be collected/gi,'may be able to serve');$('next-step').textContent=s.next;const failed=r.checks.filter(c=>!c.pass),passed=r.checks.filter(c=>c.pass);$('requirements-summary').textContent=`${failed.length?`${failed.length} blocker${failed.length>1?'s':''}`:'No sample-record blockers'} · ${passed.length} completed`;$('check-list').innerHTML=[...failed,...passed].map(c=>{let detail=c.detail;if(c.key==='withinLimit'&&f.bagsAllocated===0)detail='Allocation unavailable because registration is missing';return`<div class="check-item ${c.pass?'':'fail'}"><span class="check-mark" aria-hidden="true">${c.pass?'✓':'×'}</span><div><strong>${c.title}</strong>${detail?`<small>${detail}</small>`:''}<small>${c.pass?'Recorded as complete in this sample':'Needs attention in this sample record'}</small></div></div>`}).join('');resultCard.focus({preventScroll:true});resultCard.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
-    $('location-button').addEventListener('click',()=>{const status=$('location-status');if(!navigator.geolocation){status.textContent='Location is unavailable. Choose a depot manually.';status.className='location-status error';return}status.textContent='Requesting location…';status.className='location-status';navigator.geolocation.getCurrentPosition(({coords})=>{const n=nearestDepots(coords.latitude,coords.longitude)[0];depotSelect.value=n.id;invalidate();status.textContent=`Nearest listed depot: ${n.name} (about ${Math.round(n.distanceKm)} km)`},()=>{status.textContent='Location was not shared. Choose a depot manually.';status.className='location-status error'},{enableHighAccuracy:false,timeout:8000,maximumAge:300000})});
-    $('counter-button').addEventListener('click',()=>{if(!currentResult)return;$('counter-label').textContent=currentResult.state.label;$('counter-title').textContent=currentResult.state.title;$('counter-who').textContent=`${currentResult.farmer.name} (${currentResult.farmer.id}) · ${currentResult.depot.name}`;$('counter-reason').textContent=$('result-reason').textContent;$('counter-dialog').showModal()});$('close-dialog').addEventListener('click',()=>$('counter-dialog').close());
-  </script>
+
+<header class="topbar">
+  <a class="brand" href="#home"><img src="assets/kilimo-nitapata-logo.jpeg" alt="">Kilimo, <span>Nitapata?</span></a>
+  <div class="topbar-actions">
+    <span class="offline-pill" id="offline-pill" hidden>Using saved demo data</span>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="sw" aria-pressed="false">SW</button>
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+    </div>
+    <a class="link-btn" href="#about" data-s="about">About</a>
+  </div>
+</header>
+
+<!-- HOME -->
+<main class="screen stack" id="s-home">
+  <section class="hero">
+    <div class="eyebrow" data-s="home.eyebrow">Fertilizer e-Voucher status</div>
+    <h1 data-s="home.title">Nikienda leo, nitapata?</h1>
+    <p class="lede" data-s="home.lede">Pick the farmer and the depot. The answer comes with the source behind it.</p>
+    <svg viewBox="0 0 640 210" aria-hidden="true" class="hero-art">
+      <!-- light line illustration: field, three maize plants, a farmer with a bag, the sun -->
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="548" cy="52" r="22" class="sun"/>
+        <g class="sun"><path d="M548 14v8M548 82v8M510 52h8M578 52h8M521 25l6 6M569 73l6 6M575 25l-6 6M527 73l-6 6"/></g>
+        <path d="M0 176c110-22 210-24 320-8s210 14 320-6"/>
+        <path d="M0 194c120-14 240-12 360 0s180 4 280-8" opacity=".5"/>
+        <path d="M60 184l26-3M120 188l26-3M180 184l26-3M240 189l26-3M300 185l26-3M360 189l26-3M420 184l26-3M480 188l26-3" opacity=".45"/>
+        <!-- maize -->
+        <path d="M110 176V84"/><path d="M110 140c-20-2-34-16-38-36 18 2 32 16 38 36Z"/><path d="M110 118c20-2 34-16 38-36-18 2-32 16-38 36Z"/><path d="M110 164c-18-2-30-14-34-32 16 2 28 14 34 32Z"/>
+        <path d="M190 176V62"/><path d="M190 122c-22-2-36-18-40-40 20 2 34 18 40 40Z"/><path d="M190 100c22-2 36-18 40-40-20 2-34 18-40 40Z"/><path d="M190 152c-20-2-32-16-36-34 18 2 30 16 36 34Z"/><path d="M190 140c20-2 32-16 36-34-18 2-30 16-36 34Z"/>
+        <path d="M262 176V96"/><path d="M262 150c-18-2-30-14-34-32 16 2 28 14 34 32Z"/><path d="M262 130c18-2 30-14 34-32-16 2-28 14-34 32Z"/>
+        <ellipse cx="181" cy="108" rx="7" ry="15" transform="rotate(-20 181 108)" class="cob"/>
+        <ellipse cx="103" cy="132" rx="6" ry="13" transform="rotate(-18 103 132)" class="cob"/>
+        <!-- farmer -->
+        <g transform="translate(420 78)">
+          <circle cx="34" cy="18" r="13"/>
+          <path d="M14 14h40M20 14l4-9h20l4 9"/>
+          <path d="M18 98V50c0-12 7-20 16-20s16 8 16 20v48"/>
+          <path d="M18 98h12V66M40 66v32h10"/>
+          <path d="M20 40L6 66"/>
+          <rect x="-26" y="62" width="38" height="36" rx="6"/>
+          <path d="M-18 74h22M-18 86h22" opacity=".5"/>
+          <path d="M48 40l12 20"/>
+        </g>
+      </g>
+    </svg>
+  </section>
+
+  <section id="recent-wrap" hidden>
+    <p class="field-label"><span data-s="home.recent">Recent checks</span><small data-s="home.recent.note">Remembered on this phone only</small></p>
+    <div class="recent-row" id="recent-list"></div>
+  </section>
+
+  <section>
+    <p class="field-label"><span data-s="home.farmer">Who are you checking for?</span><small data-s="home.sample">Sample records</small></p>
+    <button type="button" class="picker" id="farmer-picker" aria-haspopup="dialog">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></span>
+      <span class="t" id="farmer-picker-text"><b></b><span></span></span>
+      <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+  </section>
+
+  <section>
+    <p class="field-label"><span data-s="home.depot">Which depot?</span><small data-s="home.bycounty">By county</small></p>
+    <button type="button" class="picker" id="depot-picker" aria-haspopup="dialog">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg></span>
+      <span class="t" id="depot-picker-text"><b></b><span></span></span>
+      <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+  </section>
+
+  <p class="tiny" data-s="home.disclaimer">Sample farmer and depot records built for this demo, not a live KIAMIS or county lookup.</p>
+</main>
+<div class="cta-bar" id="home-cta">
+  <div class="inner"><button class="btn primary" id="check-btn" type="button" data-s="home.cta">Check</button></div>
+</div>
+
+<!-- SHEET (searchable picker) -->
+<div class="sheet-backdrop" id="sheet-backdrop" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <div class="grip"></div>
+  <div class="head">
+    <h3 id="sheet-title"></h3>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" id="sheet-search" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
+    </div>
+    <div class="locate" id="locate-row" hidden>
+      <button type="button" class="link-btn" id="locate-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        <span data-s="sheet.locate">Use my location</span>
+      </button>
+      <span class="tiny" id="locate-status"></span>
+    </div>
+  </div>
+  <div class="list" id="sheet-list"></div>
+</div>
+
+<!-- ANSWER -->
+<main class="screen stack" id="s-answer" hidden>
+  <div class="verdict" id="verdict">
+    <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" id="v-mark"></svg>
+    <div class="word" id="v-word"></div>
+    <div class="word-alt" id="v-word-alt"></div>
+    <div class="who" id="v-who"></div>
+  </div>
+
+  <div class="card">
+    <div class="block" id="v-block" hidden>
+      <div class="lbl" data-s="answer.blocking">What is missing</div>
+      <div class="txt" id="v-block-text"></div>
+      <div class="more" id="v-block-more"></div>
+    </div>
+    <p id="v-reason" class="muted" style="margin:0"></p>
+    <div style="margin-top:12px">
+      <div class="kv"><span class="k" data-s="answer.price">Reported price per bag</span><span class="v tab-nums" id="v-price"></span></div>
+      <div class="kv"><span class="k" data-s="answer.allocation">Bags used</span><span class="v tab-nums" id="v-alloc"></span></div>
+    </div>
+  </div>
+
+  <div class="btn-grid">
+    <button class="btn secondary sm" type="button" id="btn-counter" data-s="answer.counter">Show at the counter</button>
+    <button class="btn secondary sm" type="button" id="btn-share" data-s="answer.share">Share</button>
+    <button class="btn secondary sm" type="button" id="btn-readaloud" data-s="answer.read" aria-expanded="false">Read this to the farmer</button>
+    <button class="btn secondary sm" type="button" id="btn-another" data-s="answer.another">Another farmer, same depot</button>
+  </div>
+
+  <div class="script" id="script" hidden></div>
+
+  <div class="card small muted" id="ussd-note"></div>
+
+  <button class="btn ghost" type="button" id="btn-detail" data-s="answer.detail">See everything behind this answer</button>
+  <p class="tiny" data-s="answer.sample">Sample data for demonstration. Not a live KIAMIS or county record.</p>
+</main>
+
+<!-- COUNTER -->
+<main class="screen stack" id="s-counter" hidden>
+  <div class="counter">
+    <div class="eyebrow" data-s="counter.eyebrow">Kilimo, Nitapata? · status shown to depot staff</div>
+    <div class="word" id="c-word"></div>
+    <div class="who" id="c-who"></div>
+    <div class="headline" id="c-headline"></div>
+    <div class="block" id="c-block" hidden style="margin-top:14px">
+      <div class="lbl" data-s="answer.blocking">What is missing</div>
+      <div class="txt" id="c-block-text"></div>
+      <div class="more" id="c-block-more"></div>
+    </div>
+    <div class="price"><span id="c-price"></span><small id="c-price-note"></small></div>
+    <div class="srcs" id="c-srcs"></div>
+    <div class="note" data-s="answer.sample">Sample data for demonstration. Not a live KIAMIS or county record.</div>
+  </div>
+  <button class="btn secondary" type="button" id="btn-back-answer" data-s="counter.back">Back</button>
+</main>
+
+<!-- DETAIL -->
+<main class="screen stack" id="s-detail" hidden>
+  <div>
+    <div class="eyebrow" data-s="detail.eyebrow">Behind the answer</div>
+    <h2 id="d-who"></h2>
+  </div>
+  <section class="card">
+    <h3 style="margin-bottom:10px" data-s="detail.reqs">Every requirement</h3>
+    <div class="ledger" id="d-ledger"></div>
+  </section>
+  <section class="card">
+    <h3 style="margin-bottom:10px" data-s="detail.prices">Price, as reported</h3>
+    <div id="d-prices"></div>
+    <p class="tiny" style="margin:10px 0 0" data-s="detail.prices.note">Two sources report different capped prices, a year apart. Treat both as reported figures, not a guarantee. The depot's posted price on the day governs.</p>
+  </section>
+  <section class="card">
+    <h3 style="margin-bottom:10px" data-s="detail.sources">Sources</h3>
+    <div id="d-sources"></div>
+  </section>
+  <details class="how card">
+    <summary data-s="detail.how">How this tool decides</summary>
+    <p data-s="detail.how.1">The six requirements and the two prices are transcribed from the five published news and analysis sources above, not from the underlying gazette notice or the KIAMIS system's own user manual, which were not publicly retrievable at build time. Where sources disagree, both figures are shown with their date and source rather than one being picked as correct.</p>
+    <p data-s="detail.how.2">The match between a farmer and a depot is decided by a fixed rule table, not a language model: each requirement is checked against the selected farmer's record, each depot carries its own authorisation flag, and the verdict is whichever is worse of the two. Nothing is inferred or guessed.</p>
+  </details>
+  <button class="btn secondary" type="button" id="btn-back-answer-2" data-s="detail.back">Back to the answer</button>
+</main>
+
+<!-- ABOUT -->
+<main class="screen stack" id="s-about" hidden>
+  <div>
+    <div class="eyebrow" data-s="about.eyebrow">Why this needs to exist</div>
+    <h2 class="about-head" data-s="about.head">He can't tell a fair price from an inflated one.</h2>
+    <p class="lede" data-s="about.p1">He already knows he's enrolled. What he doesn't know, until he's standing at the counter, is whether the price he's being asked for is the real one, or whether he's about to lose a day's labour and a fare finding out the hard way that something in his registration is missing.</p>
+    <blockquote class="pq">
+      <p data-s="about.quote">One farmer reached his depot by 4am and still found seven people ahead of him.</p>
+      <cite>The Star, 25 Aug 2026<span id="src5-pending-note"></span></cite>
+    </blockquote>
+    <p class="lede" data-s="about.p2">Knowing you're eligible doesn't shorten that queue. But knowing before you travel, and being able to prove the price at the counter, changes what the trip costs you if it goes wrong.</p>
+  </div>
+
+  <section class="stack">
+    <p class="lede" data-s="about.tie">The person typing the question, the person deciding whether to travel, and the person who has to be convinced at the counter are three different people. Most tools like this get built for the first one and quietly fail the other two.</p>
+    <div class="card persona"><h3 data-s="about.farmer">The farmer</h3><p data-s="about.farmer.p">Nikienda leo, nitapata? If I go today, will I get it? He doesn't think in terms of eligibility. He thinks in terms of "they said we'd get fertiliser," and finds out otherwise only after he's already spent the trip.</p></div>
+    <div class="card persona"><h3 data-s="about.proxy">The proxy</h3><p data-s="about.proxy.p">He's the one actually holding the phone, usually a son, daughter or grandchild who already runs the household's WhatsApp. He has to relay the answer accurately enough, by voice, that an older relative is willing to travel on the strength of it.</p></div>
+    <div class="card persona"><h3 data-s="about.clerk">The depot clerk</h3><p data-s="about.clerk.p">Not a user of this app. The person the answer has to survive. A farmer holding up a screen with a specific number, from a specific dated source, either corrects a mistake or starts a confrontation, and he's the one who absorbs it either way.</p></div>
+    <div class="card persona"><h3 data-s="about.officer">The extension officer</h3><p data-s="about.officer.p">She's already answering this question, one farmer at a time, all day. If this tool makes her faster, adoption doesn't happen one download at a time. It happens in groups, the moment she uses it in front of people she already talks to.</p></div>
+  </section>
+
+  <section class="card">
+    <h3 style="margin-bottom:8px" data-s="about.what">What this is</h3>
+    <p class="muted small" style="margin:0 0 12px" data-s="about.what.p">A status check for the fertilizer subsidy e-Voucher scheme: whether a given depot will serve a given registered farmer, exactly what is still missing, and what the bag is documented to cost. Each answer is footnoted to the source it came from.</p>
+    <div class="scope-list">
+      <div><b data-s="about.not">Not this</b><span data-s="about.not.1">Buying, selling or reserving fertilizer. No marketplace function.</span></div>
+      <div><b data-s="about.not">Not this</b><span data-s="about.not.2">Fertilizer or crop advice. No agronomic recommendations.</span></div>
+      <div><b data-s="about.not">Not this</b><span data-s="about.not.3">M-Pesa or any payment. Nothing here moves money.</span></div>
+    </div>
+  </section>
+
+  <a class="btn primary" href="#home" style="text-decoration:none" data-s="about.cta">Go to the check</a>
+  <footer>
+    <span data-s="footer.1">Built for the Claude Impact Lab, Nairobi · informational status check only</span>
+    <span data-s="footer.2">Not affiliated with the Ministry of Agriculture or KIAMIS</span>
+  </footer>
+</main>
+
+<script type="module">
+  import { SOURCES, PRICES, FARMERS, DEPOTS, REQUIREMENTS, VERDICT_LABEL, evaluate, findFarmer, findDepot, findSource, clerkSummary, blockingItem, ussdText, distanceKm } from './engine.js';
+  import { STRINGS, t, tReq, tVerdict, tReason, tScript, setLang, getLang } from './strings.js';
+
+  const $ = (id) => document.getElementById(id);
+  const KEY = { last: 'kn.last', recent: 'kn.recent', lang: 'kn.lang' };
+  const store = {
+    get(k, fb){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; }catch{ return fb; } },
+    set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
+  };
+
+  // State
+  let state = { f: null, d: null };
+  let userLoc = null; // { lat, lng } once "use my location" succeeds, kept for the session
+  const last = store.get(KEY.last, null);
+  if(last && findFarmer(last.f) && findDepot(last.d)) state = { ...last };
+  else state = { f: FARMERS[0].id, d: DEPOTS[0].id };
+
+  // Language
+  setLang(store.get(KEY.lang, 'en'));
+  function applyStrings(){
+    document.documentElement.lang = getLang();
+    document.querySelectorAll('[data-s]').forEach((el) => { const s = t(el.dataset.s); if(s != null) el.textContent = s; });
+    document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === getLang())));
+  }
+  document.querySelectorAll('.lang button').forEach((b) => b.addEventListener('click', () => {
+    setLang(b.dataset.lang); store.set(KEY.lang, getLang()); applyStrings(); renderAll();
+  }));
+
+  function cite(ids){
+    if(!ids || !ids.length) return '';
+    return '<cite class="fn">' + ids.map((i) => '<a href="#detail" data-src="'+i+'">['+i+']</a>').join('') + '</cite>';
+  }
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  // Home: pickers open a searchable sheet
+  const initials = (name) => name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+  const norm = (x) => String(x).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  function hi(text, q){
+    if(!q) return esc(text);
+    const i = norm(text).indexOf(norm(q));
+    if(i < 0) return esc(text);
+    return esc(text.slice(0, i)) + '<mark>' + esc(text.slice(i, i + q.length)) + '</mark>' + esc(text.slice(i + q.length));
+  }
+  function renderPickers(){
+    const f = findFarmer(state.f), d = findDepot(state.d);
+    $('farmer-picker-text').innerHTML = '<b>'+esc(f.name)+'</b><span>'+esc(f.id)+' · '+esc(f.county)+' · '+esc(f.crop)+', '+f.acres+' '+t('acres')+'</span>';
+    $('depot-picker-text').innerHTML = '<b>'+esc(d.name)+'</b><span>'+esc(d.county)+' · '+esc(d.type)+'</span>';
+  }
+
+  let sheetKind = null;
+  function sheetItems(q){
+    if(sheetKind === 'farmer'){
+      return FARMERS.filter((f) => !q || norm(f.name + ' ' + f.id + ' ' + f.county + ' ' + f.crop).includes(norm(q)))
+        .map((f) => ({ id: f.id, group: null, html:
+          '<span class="av">'+esc(initials(f.name))+'</span>' +
+          '<span class="t"><b>'+hi(f.name, q)+'</b><span>'+hi(f.id, q)+' · '+hi(f.county, q)+' · '+hi(f.crop, q)+', '+f.acres+' '+t('acres')+'</span></span>' }));
+    }
+    const f = findFarmer(state.f);
+    let list = DEPOTS.filter((d) => !q || norm(d.name + ' ' + d.county + ' ' + d.type).includes(norm(q)));
+    if (userLoc) {
+      list = list.slice().sort((a, b) => a.authorized !== b.authorized ? (a.authorized ? -1 : 1) :
+        distanceKm(userLoc.lat, userLoc.lng, a.coords.lat, a.coords.lng) - distanceKm(userLoc.lat, userLoc.lng, b.coords.lat, b.coords.lng));
+    } else {
+      list = list.slice().sort((a, b) => (a.county === f.county ? -1 : b.county === f.county ? 1 : a.county.localeCompare(b.county)));
+    }
+    return list.map((d) => {
+      const dist = userLoc ? distanceKm(userLoc.lat, userLoc.lng, d.coords.lat, d.coords.lng) : null;
+      return { id: d.id, group: userLoc ? null : d.county + (d.county === f.county ? ' · ' + t('home.farmercounty') : ''), html:
+        '<span class="av">'+esc(initials(d.name))+'</span>' +
+        '<span class="t"><b>'+hi(d.name, q)+'</b><span>'+hi(d.type, q)+(dist != null ? ' · ~'+Math.round(dist)+'km '+t('sheet.approx') : '')+'</span></span>' +
+        (d.authorized ? '' : '<span class="badge danger">'+t('home.unlisted')+'</span>') };
+    });
+  }
+  function renderSheetList(){
+    const q = $('sheet-search').value.trim();
+    const items = sheetItems(q);
+    const selected = sheetKind === 'farmer' ? state.f : state.d;
+    let last = null, out = '';
+    for(const it of items){
+      if(it.group && it.group !== last){ out += '<div class="grp">'+esc(it.group)+'</div>'; last = it.group; }
+      out += '<button type="button" class="opt" role="option" aria-selected="'+(it.id === selected)+'" data-id="'+it.id+'">'+it.html+'</button>';
+    }
+    $('sheet-list').innerHTML = out || '<div class="empty-state">'+t('sheet.none')+'</div>';
+  }
+  function openSheet(kind){
+    sheetKind = kind;
+    $('sheet-title').textContent = t(kind === 'farmer' ? 'home.farmer' : 'home.depot');
+    $('sheet-search').value = '';
+    $('sheet-search').placeholder = t(kind === 'farmer' ? 'sheet.search.farmer' : 'sheet.search.depot');
+    $('locate-row').hidden = kind !== 'depot';
+    $('locate-status').textContent = '';
+    renderSheetList();
+    $('sheet-backdrop').hidden = false; $('sheet').hidden = false;
+    requestAnimationFrame(() => { $('sheet-backdrop').classList.add('open'); $('sheet').classList.add('open'); });
+    document.body.style.overflow = 'hidden';
+    // Keyboard users get focus in the search; on touch, leave it so the sheet is readable before the keyboard rises.
+    if(matchMedia('(hover:hover) and (pointer:fine)').matches) $('sheet-search').focus();
+  }
+  function closeSheet(){
+    $('sheet-backdrop').classList.remove('open'); $('sheet').classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => { $('sheet-backdrop').hidden = true; $('sheet').hidden = true; }, 260);
+  }
+  $('farmer-picker').addEventListener('click', () => openSheet('farmer'));
+  $('depot-picker').addEventListener('click', () => openSheet('depot'));
+  $('locate-btn').addEventListener('click', () => {
+    if(!navigator.geolocation){ $('locate-status').textContent = t('sheet.locate.unavailable'); return; }
+    $('locate-btn').disabled = true;
+    $('locate-status').textContent = t('sheet.locate.loading');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        $('locate-btn').disabled = false;
+        $('locate-status').textContent = '';
+        renderSheetList();
+      },
+      () => {
+        $('locate-btn').disabled = false;
+        $('locate-status').textContent = t('sheet.locate.denied');
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+    );
+  });
+  $('sheet-backdrop').addEventListener('click', closeSheet);
+  $('sheet-search').addEventListener('input', renderSheetList);
+  $('sheet-search').addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') closeSheet();
+    if(e.key === 'Enter'){ const first = $('sheet-list').querySelector('[data-id]'); if(first) first.click(); }
+  });
+  $('sheet-list').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-id]'); if(!b) return;
+    if(sheetKind === 'farmer') state.f = b.dataset.id; else state.d = b.dataset.id;
+    renderPickers(); closeSheet();
+  });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
+
+  function renderRecent(){
+    const recent = store.get(KEY.recent, []);
+    $('recent-wrap').hidden = recent.length === 0;
+    $('recent-list').innerHTML = recent.map((r) => {
+      const f = findFarmer(r.f), d = findDepot(r.d);
+      if(!f || !d) return '';
+      const v = evaluate(f, d).verdict;
+      return '<button type="button" class="recent" data-f="'+f.id+'" data-d="'+d.id+'">' +
+        '<span class="pill '+v+'">'+esc(tVerdict(v))+'</span>' +
+        '<span class="t">'+esc(f.name)+'<span>'+esc(d.name)+'</span></span></button>';
+    }).join('');
+  }
+  $('recent-list').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-f]'); if(!b) return;
+    state = { f: b.dataset.f, d: b.dataset.d }; go('answer');
+  });
+  $('check-btn').addEventListener('click', () => go('answer'));
+
+  function remember(){
+    store.set(KEY.last, state);
+    const recent = store.get(KEY.recent, []).filter((r) => !(r.f === state.f && r.d === state.d));
+    recent.unshift({ f: state.f, d: state.d });
+    store.set(KEY.recent, recent.slice(0, 5));
+  }
+
+  // Fit a verdict word to the card: the character count of the widest line
+  // once the phrase is allowed to break into at most two lines.
+  function fitChars(text){
+    const words = text.split(' ');
+    let best = text.length;
+    for(let i = 1; i < words.length; i++){
+      const a = words.slice(0, i).join(' ').length, b = words.slice(i).join(' ').length;
+      best = Math.min(best, Math.max(a, b));
+    }
+    return best;
+  }
+
+  // Answer
+  function renderAnswer(){
+    const f = findFarmer(state.f), d = findDepot(state.d);
+    const r = evaluate(f, d);
+    const b = blockingItem(r, d);
+    const v = $('verdict');
+    v.className = 'verdict ' + r.verdict;
+    $('v-word').textContent = tVerdict(r.verdict);
+    $('v-word').style.setProperty('--chars', fitChars(tVerdict(r.verdict)));
+    $('v-mark').innerHTML = r.verdict === 'ok' ? '<path d="M5 12l5 5L20 7"/>' : r.verdict === 'warn' ? '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>' : '<path d="M6 6l12 12M18 6L6 18"/>';
+    $('v-word-alt').textContent = tVerdict(r.verdict, true);
+    $('v-who').innerHTML = '<b>'+esc(f.name)+'</b> · '+esc(f.id)+' &rarr; <b>'+esc(d.name)+'</b>';
+    void v.offsetWidth; v.classList.add('pop');
+
+    const blk = $('v-block');
+    blk.hidden = !b;
+    if(b){
+      blk.className = 'block ' + (b.key === 'depot' ? 'danger' : '');
+      $('v-block-text').innerHTML = esc(tReq(b)) + cite(b.src);
+      const more = r.gaps.length - (b.key === 'depot' ? 0 : 1);
+      $('v-block-more').textContent = more > 0 ? t(b.key === 'depot' ? 'answer.more.depot' : 'answer.more').replace('{n}', more) : '';
+    }
+    $('v-reason').innerHTML = esc(tReason(r, f, d)) + cite(r.reason.src);
+    $('v-price').innerHTML = esc(PRICES[0].amount) + cite(PRICES[0].src);
+    $('v-alloc').textContent = f.bagsUsed + ' / ' + f.bagsAllocated;
+    $('script').hidden = true; $('btn-readaloud').setAttribute('aria-expanded', 'false');
+    $('script').innerHTML = tScript(r, f, d, b).map((line) => '<p><span class="sw">'+esc(line.sw)+'</span><br><span class="en">'+esc(line.en)+'</span></p>').join('');
+    $('ussd-note').textContent = t('answer.ussd');
+  }
+  $('btn-readaloud').addEventListener('click', () => {
+    const open = $('script').hidden; $('script').hidden = !open; $('btn-readaloud').setAttribute('aria-expanded', String(open));
+    if(open) $('script').scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  });
+  $('btn-share').addEventListener('click', async () => {
+    const text = ussdText(findFarmer(state.f), findDepot(state.d));
+    const url = location.origin + location.pathname + '#answer/' + state.f + '/' + state.d;
+    try{
+      if(navigator.share){ await navigator.share({ text: text + ' ' + url }); return; }
+      await navigator.clipboard.writeText(text + ' ' + url); toast(t('answer.copied'));
+    }catch(e){ /* user cancelled */ }
+  });
+  $('btn-another').addEventListener('click', () => go('home', { keepDepot: true }));
+  $('btn-counter').addEventListener('click', () => go('counter'));
+  $('btn-detail').addEventListener('click', () => go('detail'));
+  $('btn-back-answer').addEventListener('click', () => go('answer'));
+  $('btn-back-answer-2').addEventListener('click', () => go('answer'));
+
+  // Counter
+  function renderCounter(){
+    const f = findFarmer(state.f), d = findDepot(state.d);
+    const s = clerkSummary(f, d);
+    const r = evaluate(f, d);
+    $('c-word').className = 'word ' + s.verdict;
+    $('c-word').textContent = tVerdict(s.verdict).toUpperCase();
+    $('c-word').style.setProperty('--chars', fitChars(tVerdict(s.verdict).toUpperCase()));
+    $('c-who').textContent = f.name + ', ' + f.id + '  →  ' + d.name;
+    $('c-headline').textContent = tReason(r, f, d);
+    $('c-block').hidden = !s.blocking;
+    if(s.blocking){
+      $('c-block').className = 'block ' + (s.blocking.key === 'depot' ? 'danger' : '');
+      $('c-block-text').textContent = tReq(s.blocking);
+      $('c-block-more').textContent = s.othersOutstanding > 0 ? t(s.blocking.key === 'depot' ? 'answer.more.depot' : 'answer.more').replace('{n}', s.othersOutstanding) : '';
+    }
+    $('c-price').textContent = s.price.amount;
+    $('c-price-note').textContent = s.price.label + ' (' + s.price.note + ')';
+    $('c-srcs').innerHTML = s.sources.map((src) => '<div>['+src.id+'] '+esc(src.title)+' · '+esc(src.pub)+'</div>').join('');
+  }
+
+  // Detail
+  function renderDetail(){
+    const f = findFarmer(state.f), d = findDepot(state.d);
+    const r = evaluate(f, d);
+    $('d-who').textContent = f.name + ' → ' + d.name;
+    $('d-ledger').innerHTML = r.checks.map((c) =>
+      '<div class="lrow '+(c.pass?'pass':'fail')+'"><div class="mark">'+(c.pass?'✓':'✗')+'</div>' +
+      '<div class="desc">'+esc(tReq(c))+(c.detail ? ' <span>('+esc(c.detail)+')</span>' : '')+'</div>' +
+      '<div>'+cite(c.src)+'</div></div>'
+    ).join('');
+    $('d-prices').innerHTML = PRICES.map((p) =>
+      '<div class="kv"><span class="k">'+esc(p.label)+' <span class="tiny">('+esc(p.note)+')</span></span><span class="v tab-nums">'+esc(p.amount)+cite(p.src)+'</span></div>'
+    ).join('');
+    $('d-sources').innerHTML = SOURCES.map((s) =>
+      '<div class="src" id="src-'+s.id+'"><div class="n">['+s.id+']</div><div>' +
+        '<div class="title">'+(s.url ? '<a href="'+s.url+'" target="_blank" rel="noopener">'+esc(s.title)+'</a>' : esc(s.title)+'<span class="pending">'+t('pending')+'</span>')+'</div>' +
+        '<div class="meta">'+esc(s.pub)+'</div>' +
+        '<div class="grounds">'+s.grounds.map((g) => '<span>'+esc(g)+'</span>').join('')+'</div>' +
+      '</div></div>'
+    ).join('');
+  }
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[data-src]'); if(!a) return;
+    e.preventDefault(); go('detail');
+    requestAnimationFrame(() => $('src-'+a.dataset.src)?.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+  });
+
+  // About
+  const src5 = findSource(5);
+  $('src5-pending-note').textContent = src5 && !src5.url ? ', ' + t('pending') : '';
+
+  // Router
+  const SCREENS = ['home', 'answer', 'counter', 'detail', 'about'];
+  function go(name, opts = {}){
+    if(name === 'home' && opts.keepDepot){ location.hash = '#home/' + state.d; return; }
+    if(name === 'home'){ location.hash = '#home'; return; }
+    if(name === 'about'){ location.hash = '#about'; return; }
+    location.hash = '#' + name + '/' + state.f + '/' + state.d;
+  }
+  function route(){
+    const parts = location.hash.replace(/^#/, '').split('/');
+    let name = SCREENS.includes(parts[0]) ? parts[0] : 'home';
+    if(name === 'home' && parts[1] && findDepot(parts[1])) state.d = parts[1];
+    if(['answer','counter','detail'].includes(name)){
+      if(parts[1] && findFarmer(parts[1])) state.f = parts[1];
+      if(parts[2] && findDepot(parts[2])) state.d = parts[2];
+      remember();
+    }
+    SCREENS.forEach((s) => $('s-'+s).hidden = s !== name);
+    $('home-cta').hidden = name !== 'home';
+    if(name === 'home'){ renderRecent(); renderPickers(); }
+    if(name === 'answer') renderAnswer();
+    if(name === 'counter') renderCounter();
+    if(name === 'detail') renderDetail();
+    window.scrollTo({ top: 0 });
+  }
+  function renderAll(){ route(); }
+  window.addEventListener('hashchange', route);
+
+  // Offline pill
+  function net(){ $('offline-pill').hidden = navigator.onLine; }
+  window.addEventListener('online', net); window.addEventListener('offline', net); net();
+
+  function toast(msg){
+    const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg; document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1800);
+  }
+
+  // PWA: offline cache. Registered after first paint so it never delays the check.
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+  }
+  // Install nudge, once.
+  let deferredInstall = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); deferredInstall = e;
+    if(store.get('kn.install.dismissed', false)) return;
+    const bar = document.createElement('div'); bar.className = 'toast'; bar.style.cursor = 'pointer';
+    bar.textContent = t('install'); bar.addEventListener('click', async () => { bar.remove(); await deferredInstall.prompt(); store.set('kn.install.dismissed', true); });
+    document.body.appendChild(bar); setTimeout(() => { bar.remove(); store.set('kn.install.dismissed', true); }, 8000);
+  });
+
+  applyStrings();
+  if(!location.hash){ location.replace(last ? '#answer/'+state.f+'/'+state.d : '#home'); }
+  route();
+</script>
 </body>
 </html>

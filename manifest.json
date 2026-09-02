@@ -1,0 +1,15 @@
+{
+  "name": "Kilimo, Nitapata?",
+  "short_name": "Nitapata?",
+  "description": "Will the depot serve him, what is he still missing, and what does the bag cost. Fertilizer e-Voucher status check with sources.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F4F1EA",
+  "theme_color": "#F4F1EA",
+  "lang": "en",
+  "icons": [
+    { "src": "favicon.png", "sizes": "1536x1536", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
