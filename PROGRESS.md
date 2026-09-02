@@ -12,7 +12,7 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 |---|---|---|---|
 | 0 | Extract rule engine (`engine.js`), fold prototype into repo, Vercel-ready layout | DONE | `46efd97` |
 | 1 | Counter-presentable clerk view | DONE | (this push) |
-| 2 | Mobile polish on the base scroll page | Not started | |
+| 2 | Mobile polish on the base scroll page | DONE | (this push) |
 | 3 | Problem screen (persona copy, scale figures) | Blocked on source 5 URL from Mailu | |
 | 4 | Scripted Q&A answers | Not started | |
 | 5 | Pitch narrative (fair-price lead) | Not started | |
@@ -47,6 +47,20 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 **Why this is core, not optional:** the counter screen is the product's actual stated design goal in FOUNDATION.md §2.2, the citation only matters at the moment a farmer holds it up to a clerk.
 
 **Test:** see [TESTING.md → Step 1](TESTING.md#step-1-clerk-view).
+
+---
+
+## Step 2, Mobile polish on the base scroll page
+
+**Date:** 2 Sep 2026
+**What changed:** the page was already responsive (built mobile-first from the start), so this was a targeted audit against real constraints, not a rewrite, per the plan-review decision to keep the scroll page rather than build screen-by-screen routing.
+- `index.html`: citation superscript links (`[2]`, `[3]`, etc.) had a 20x14px tap target, too small for a thumb. Enlarged the hit area to roughly 28x39px using padding plus a matching negative margin, so the visible mark stays the same size and position while the clickable area grows.
+- `index.html`: the farmer/depot `<select>` elements were 14.5px font, which triggers iOS Safari's auto-zoom on focus below 16px. Bumped to 16px.
+- Checked and found already correct, no change needed: no horizontal overflow at 375px or 320px viewport width (including the clerk view), primary buttons already 47 to 48px tall, the `<details>` "how this works" panel opens correctly, the scope banner and requirement-tag grids already collapse to a single column under 560px.
+
+**Why 320px specifically:** this product's stated audience skews toward older or shared devices, not flagship phones, so the narrower of the two common breakpoints (320px, 375px) was checked deliberately rather than assumed to be fine because 375px passed.
+
+**Test:** see [TESTING.md, Step 2](TESTING.md#step-2-mobile-polish).
 
 ---
 

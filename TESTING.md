@@ -49,6 +49,23 @@ If `npm test` fails on a machine that isn't yours, don't chase it silently, say 
 
 ---
 
+## Step 2, Mobile polish
+
+**Automated:** none new. `npm test` should still show 9/9 (this step touched only CSS, not `engine.js`).
+
+**Manual, in the browser (use device emulation or a real phone):**
+
+1. At 375px width, load the page. Confirm no horizontal scrollbar and nothing overflows the right edge, check visually and, if you have DevTools, confirm `document.documentElement.scrollWidth <= document.documentElement.clientWidth`.
+2. At 320px width, repeat step 1 for both the checker page and the clerk view (select a farmer and depot, run a check, click "Show this at the counter"). This is the narrower, more conservative width; if this passes, 375px and up are covered.
+3. Tap (or click) a citation mark such as `[2]` next to any requirement row. It should jump to the matching row in the Sources section without needing a precise tap; the clickable area is intentionally larger than the visible bracketed number.
+4. Focus a `<select>` dropdown on an actual iOS device (a desktop browser or Android emulator will not reproduce this). The page must not zoom in when the dropdown opens. If it zooms, the select's font size has regressed below 16px.
+5. Tap "How this tool decides & where its data comes from" at the bottom of the page. It must expand in place without the page jumping or the layout breaking.
+6. Confirm the two main buttons ("Check this depot for this farmer" and the clerk view's "Show this at the counter") are each comfortably tappable, at least 44px tall is the usual accessibility guideline; both should measure at or above that.
+
+**Pass condition:** all 6 checks above pass at both 320px and 375px widths, `npm test` still shows 9/9.
+
+---
+
 ## Adding a new section
 
 Same rule as PROGRESS.md: copy the block below, fill it in, and do it in the same push that marks the step DONE.
