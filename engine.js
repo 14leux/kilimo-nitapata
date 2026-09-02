@@ -63,24 +63,36 @@ export const REQUIREMENTS = [
 // Sample records. These are demo data built for this product, not a feed
 // from KIAMIS or any county register. Every channel must label them as such.
 export const FARMERS = [
+  // v2 fields: collectionPointId is the depot the register assigns; phone is
+  // E.164; demo:true means a placeholder number the sender must never message
+  // (Twilio trial allows 5 verified numbers, see specs/08 Q3); lang is the
+  // language the release message goes out in; token is the farmer page key.
+  // TODO(mailu): replace up to five placeholder phones with verified team
+  // phones and set demo:false on those only.
   { id: "F-2291", name: "Wanjiru M.", county: "Trans Nzoia", crop: "Maize", acres: 2.5,
     registered: true, idLinked: true, acreage: true, acChief: true, subCounty: true,
-    bagsUsed: 4, bagsAllocated: 5 },
+    bagsUsed: 4, bagsAllocated: 5,
+    collectionPointId: "D-01", phone: "+254700000001", demo: true, lang: "sw", token: "wanj2291kt01" },
   { id: "F-3387", name: "Otieno K.", county: "Kisumu", crop: "Rice", acres: 1,
     registered: true, idLinked: true, acreage: true, acChief: false, subCounty: true,
-    bagsUsed: 0, bagsAllocated: 2 },
+    bagsUsed: 0, bagsAllocated: 2,
+    collectionPointId: "D-04", phone: "+254700000002", demo: true, lang: "sw", token: "otie3387ks04" },
   { id: "F-1046", name: "Chebet R.", county: "Nandi", crop: "Maize", acres: 3,
     registered: true, idLinked: true, acreage: false, acChief: true, subCounty: false,
-    bagsUsed: 0, bagsAllocated: 6 },
+    bagsUsed: 0, bagsAllocated: 6,
+    collectionPointId: "D-03", phone: "+254700000003", demo: true, lang: "sw", token: "cheb1046nd03" },
   { id: "F-5502", name: "Mwangi P.", county: "Nyandarua", crop: "Irish potato", acres: 0.5,
     registered: false, idLinked: false, acreage: false, acChief: false, subCounty: false,
-    bagsUsed: 0, bagsAllocated: 0 },
+    bagsUsed: 0, bagsAllocated: 0,
+    collectionPointId: "D-02", phone: null, demo: true, lang: "en", token: "mwan5502ny02" },
   { id: "F-4118", name: "Kiprotich J.", county: "Uasin Gishu", crop: "Maize", acres: 4,
     registered: true, idLinked: true, acreage: true, acChief: true, subCounty: true,
-    bagsUsed: 8, bagsAllocated: 8 },
+    bagsUsed: 8, bagsAllocated: 8,
+    collectionPointId: "D-02", phone: "+254700000005", demo: true, lang: "en", token: "kipr4118ug02" },
   { id: "F-2790", name: "Achieng L.", county: "Kericho", crop: "Tea", acres: 2,
     registered: true, idLinked: true, acreage: true, acChief: true, subCounty: true,
-    bagsUsed: 1, bagsAllocated: 4 }
+    bagsUsed: 1, bagsAllocated: 4,
+    collectionPointId: "D-06", phone: "+254700000006", demo: true, lang: "sw", token: "achi2790kc06" }
 ];
 
 export const DEPOTS = [
@@ -180,6 +192,7 @@ export function evaluate(farmer, depot, season) {
 export const findFarmer = (id) => FARMERS.find((f) => f.id === id);
 export const findDepot = (id) => DEPOTS.find((d) => d.id === id);
 export const findSource = (id) => SOURCES.find((s) => s.id === id);
+export const findFarmerByToken = (token) => FARMERS.find((f) => f.token === token);
 
 /**
  * The single most important thing standing between this farmer and a bag,
