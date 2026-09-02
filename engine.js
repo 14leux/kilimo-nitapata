@@ -264,3 +264,63 @@ export function ussdText(farmer, depot) {
   }
   return text;
 }
+
+/** Signature requirements: the ones a named person signs. */
+export const SIGNATURE_KEYS = ["acChief", "subCounty"];
+export const SIGNER = { acChief: "Assistant Chief", subCounty: "Sub-County Agricultural Officer" };
+
+/** Reported price as a number, from the first PRICES entry. */
+export const DEFAULT_PRICE_PER_BAG = Number(PRICES[0].amount.replace(/[^0-9]/g, ""));
+
+/**
+ * The frozen record a release writes and the farmer page shows. Built from
+ * an evaluate() result, never recomputed on the farmer side. Pure: pass
+ * `now` to make it deterministic.
+ *
+ * cost lines carry a src array (published) or priceSource "officer" (set
+ * for the season by the sub-county office). Nothing here is a computed
+ * subsidy figure: no source gives the full market price, so the subsidy
+ * share is stated as text with its source.
+ */
+export function buildSnapshot(result, farmer, depot, season, now = new Date().toISOString()) {
+  const blocking = blockingItem(result, depot);
+  const approvals = REQUIREMENTS.filter((r) => SIGNATURE_KEYS.includes(r.key)).map((r) => {
+    const rec = (farmer.approvals && farmer.approvals[r.key]) || {};
+    return { key: r.key, title: r.title, signer: SIGNER[r.key], signed: Boolean(farmer[r.key]), signedBy: rec.signedBy || null, signedAt: rec.signedAt || null, src: r.src };
+  });
+
+  const officerPrice = season && season.pricePerBag != null;
+  const pricePerBag = officerPrice ? Number(season.pricePerBag) : DEFAULT_PRICE_PER_BAG;
+  const bagsRemaining = Math.max(0, farmer.bagsAllocated - farmer.bagsUsed);
+  const cost = {
+    pricePerBag,
+    priceSource: officerPrice ? "officer" : "engine",
+    priceSrc: officerPrice ? [] : PRICES[0].src,
+    priceNote: officerPrice ? "set by sub-county office for this season" : PRICES[0].note,
+    bagsAllocated: farmer.bagsAllocated,
+    bagsUsed: farmer.bagsUsed,
+    bagsRemaining,
+    total: pricePerBag * bagsRemaining,
+    subsidyNote: { text: "Government covers the rest of the market price, reported as 40%.", src: [4] },
+    noOtherFee: { text: "No other fee is listed in the published redemption process.", src: [2] }
+  };
+
+  const sources = [...new Set([
+    ...result.reason.src, ...(blocking ? blocking.src : []), ...cost.priceSrc, ...cost.subsidyNote.src, ...cost.noOtherFee.src,
+    ...approvals.flatMap((a) => a.src)
+  ])].sort((a, b) => a - b);
+
+  return {
+    farmerId: farmer.id,
+    depotId: depot.id,
+    verdict: result.verdict,
+    reason: result.reason,
+    blocking,
+    gaps: result.gaps.map((g) => ({ key: g.key, title: g.title, src: g.src })),
+    approvals,
+    cost,
+    sources,
+    season: season ? { id: season.id || null, subsidyReleased: season.subsidyReleased !== false } : null,
+    computedAt: now
+  };
+}
