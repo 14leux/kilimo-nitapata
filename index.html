@@ -91,8 +91,10 @@
   }
   .lang button[aria-pressed="true"]{ background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.08); }
   .link-btn{
-    background:var(--surface-2); border:0; border-radius:999px; padding:8px 14px; font-size:13px; font-weight:700; color:var(--ink-2); text-decoration:none; min-height:36px; display:inline-flex; align-items:center; cursor:pointer;
+    background:var(--surface-2); border:0; border-radius:999px; padding:8px 14px; font-size:13px; font-weight:700; color:var(--ink-2); text-decoration:none; min-height:36px; display:inline-flex; align-items:center; gap:6px; cursor:pointer;
   }
+  .link-btn:disabled{ opacity:.6; cursor:default; }
+  .locate{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:8px; }
   .offline-pill{ font-size:12px; padding:4px 10px; border-radius:999px; background:var(--warn-bg); color:var(--warn); font-weight:700; }
 
   /* Layout */
@@ -390,6 +392,13 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <input type="search" id="sheet-search" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
     </div>
+    <div class="locate" id="locate-row" hidden>
+      <button type="button" class="link-btn" id="locate-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        <span data-s="sheet.locate">Use my location</span>
+      </button>
+      <span class="tiny" id="locate-status"></span>
+    </div>
   </div>
   <div class="list" id="sheet-list" role="listbox"></div>
 </div>
@@ -516,7 +525,7 @@
 </main>
 
 <script type="module">
-  import { SOURCES, PRICES, FARMERS, DEPOTS, REQUIREMENTS, VERDICT_LABEL, evaluate, findFarmer, findDepot, findSource, clerkSummary, blockingItem, ussdText } from './engine.js';
+  import { SOURCES, PRICES, FARMERS, DEPOTS, REQUIREMENTS, VERDICT_LABEL, evaluate, findFarmer, findDepot, findSource, clerkSummary, blockingItem, ussdText, distanceKm } from './engine.js';
   import { STRINGS, t, tReq, tVerdict, tReason, tScript, setLang, getLang } from './strings.js';
 
   const $ = (id) => document.getElementById(id);
@@ -528,6 +537,7 @@
 
   // State
   let state = { f: null, d: null };
+  let userLoc = null; // { lat, lng } once "use my location" succeeds, kept for the session
   const last = store.get(KEY.last, null);
   if(last && findFarmer(last.f) && findDepot(last.d)) state = { ...last };
   else state = { f: FARMERS[0].id, d: DEPOTS[0].id };
@@ -573,12 +583,20 @@
           '<span class="t"><b>'+hi(f.name, q)+'</b><span>'+hi(f.id, q)+' · '+hi(f.county, q)+' · '+hi(f.crop, q)+', '+f.acres+' '+t('acres')+'</span></span>' }));
     }
     const f = findFarmer(state.f);
-    const list = DEPOTS.filter((d) => !q || norm(d.name + ' ' + d.county + ' ' + d.type).includes(norm(q)))
-      .sort((a, b) => (a.county === f.county ? -1 : b.county === f.county ? 1 : a.county.localeCompare(b.county)));
-    return list.map((d) => ({ id: d.id, group: d.county + (d.county === f.county ? ' · ' + t('home.farmercounty') : ''), html:
-      '<span class="av">'+esc(initials(d.name))+'</span>' +
-      '<span class="t"><b>'+hi(d.name, q)+'</b><span>'+hi(d.type, q)+'</span></span>' +
-      (d.authorized ? '' : '<span class="badge danger">'+t('home.unlisted')+'</span>') }));
+    let list = DEPOTS.filter((d) => !q || norm(d.name + ' ' + d.county + ' ' + d.type).includes(norm(q)));
+    if (userLoc) {
+      list = list.slice().sort((a, b) => a.authorized !== b.authorized ? (a.authorized ? -1 : 1) :
+        distanceKm(userLoc.lat, userLoc.lng, a.coords.lat, a.coords.lng) - distanceKm(userLoc.lat, userLoc.lng, b.coords.lat, b.coords.lng));
+    } else {
+      list = list.slice().sort((a, b) => (a.county === f.county ? -1 : b.county === f.county ? 1 : a.county.localeCompare(b.county)));
+    }
+    return list.map((d) => {
+      const dist = userLoc ? distanceKm(userLoc.lat, userLoc.lng, d.coords.lat, d.coords.lng) : null;
+      return { id: d.id, group: userLoc ? null : d.county + (d.county === f.county ? ' · ' + t('home.farmercounty') : ''), html:
+        '<span class="av">'+esc(initials(d.name))+'</span>' +
+        '<span class="t"><b>'+hi(d.name, q)+'</b><span>'+hi(d.type, q)+(dist != null ? ' · ~'+Math.round(dist)+'km '+t('sheet.approx') : '')+'</span></span>' +
+        (d.authorized ? '' : '<span class="badge danger">'+t('home.unlisted')+'</span>') };
+    });
   }
   function renderSheetList(){
     const q = $('sheet-search').value.trim();
@@ -596,6 +614,8 @@
     $('sheet-title').textContent = t(kind === 'farmer' ? 'home.farmer' : 'home.depot');
     $('sheet-search').value = '';
     $('sheet-search').placeholder = t(kind === 'farmer' ? 'sheet.search.farmer' : 'sheet.search.depot');
+    $('locate-row').hidden = kind !== 'depot';
+    $('locate-status').textContent = '';
     renderSheetList();
     $('sheet-backdrop').hidden = false; $('sheet').hidden = false;
     requestAnimationFrame(() => { $('sheet-backdrop').classList.add('open'); $('sheet').classList.add('open'); });
@@ -610,6 +630,24 @@
   }
   $('farmer-picker').addEventListener('click', () => openSheet('farmer'));
   $('depot-picker').addEventListener('click', () => openSheet('depot'));
+  $('locate-btn').addEventListener('click', () => {
+    if(!navigator.geolocation){ $('locate-status').textContent = t('sheet.locate.unavailable'); return; }
+    $('locate-btn').disabled = true;
+    $('locate-status').textContent = t('sheet.locate.loading');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        $('locate-btn').disabled = false;
+        $('locate-status').textContent = '';
+        renderSheetList();
+      },
+      () => {
+        $('locate-btn').disabled = false;
+        $('locate-status').textContent = t('sheet.locate.denied');
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+    );
+  });
   $('sheet-backdrop').addEventListener('click', closeSheet);
   $('sheet-search').addEventListener('input', renderSheetList);
   $('sheet-search').addEventListener('keydown', (e) => {
