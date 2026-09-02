@@ -46,7 +46,7 @@ A mobile-first, installable web page, built for the proxy (the literate, smartph
 | Marketplace function | Turns an information layer into an intermediary with inventory liability. |
 | Payments | Converts the product into a regulated financial service. |
 | Live KIAMIS/government integration | No public API, sandbox, or self-service status lookup was found anywhere at national or county level. Confirmed unavailable, flagged as future work requiring a real data-sharing arrangement with MoALD/KIAMIS. |
-| Native app build | No time for app-store review inside the hackathon window; "mobile-first installable web page" is the honest description, not a literal Add-to-Home-Screen PWA, since the Artifact hosting used for this build doesn't give control of the page head a manifest and service worker need. |
+| Native app build | No time for app-store review inside the hackathon window. A web app manifest for Add-to-Home-Screen is now feasible under Vercel hosting (we control the page head) but is a nice-to-have, not a V1 item. |
 | Full national depot dataset | A small representative demo set stands in for the real 384-point redemption network. |
 
 USSD and GPS/location moved from this table to the stretch-milestone row in 2.1 on 2 Sep, after team pushback; see MILESTONES.md and Decision Log 9.
@@ -62,17 +62,18 @@ USSD and GPS/location moved from this table to the stretch-milestone row in 2.1 
 
 | Layer | Technology | Decision rationale |
 |---|---|---|
-| Frontend | Single-file mobile-first HTML/CSS/JS, installable via a web app manifest (PWA) | Opens on a judge's phone the instant the link is shared, no app-store delay; installable gives it the feel of "an app" without native build time |
-| Logic | Deterministic rule table (JS), same pattern as the existing artifact prototype | "Never guess" is a stated design principle, an LLM producing the verdict would break the grounding guarantee the whole product is built on |
-| Data | Embedded demo dataset (sample farmers, depots, rules, sources) | No backend needed; keeps the build achievable in hours; matches what's already proven in the prototype |
-| Hosting | Claude Artifact publish (hosted URL) | Already the delivery mechanism for the existing prototype; live, shareable, no deploy pipeline to set up today |
+| Frontend | Static mobile-first HTML/CSS/JS (`index.html`), no framework, no build step | Opens on a judge's phone the instant the link is shared; a web app manifest for installability is now possible since we control the page head (was not possible under Artifact hosting) |
+| Logic | Deterministic rule engine in one shared ES module (`engine.js`), imported by the page and by any future channel (USSD, SMS, batch) | "Never guess" is a stated design principle; one copy of the data and the verdict function is the only way two channels stay in agreement. Covered by `npm test` (all 36 farmer x depot pairs, citation integrity, house style) |
+| Data | Embedded demo dataset in `engine.js` (sample farmers, depots, rules, sources) | No backend needed; keeps the build achievable in hours |
+| Hosting | Vercel, deployed from this GitHub repo | Team members can deploy, which Artifact hosting never allowed; static page plus optional serverless functions under `api/` means Milestone A's USSD webhook can live in the same repo and import the same engine. Replaced Artifact hosting on 2 Sep, see Decision Log |
 
 ### 3.1 What is explicitly excluded from the stack
 | Technology | Why excluded |
 |---|---|
 | React Native / Flutter / native app shell | No time to build and there's no app-store distribution happening today |
-| Any backend/database service | Adds a moving part with no time to harden it; demo data ships with the page |
-| Live geolocation-driven backend matching | Location is deferred to V2 entirely, so no supporting backend work is needed today |
+| Any database service | Adds a moving part with no time to harden it; demo data ships with the page |
+| Backend beyond a single Vercel serverless function | Only Milestone A (USSD) needs a server at all, and a single `api/ussd.js` importing `engine.js` covers it. No persistent server process anywhere. |
+| Live geolocation-driven backend matching | Milestone B computes distance client-side (haversine over a small coordinate table); no backend involved |
 
 ---
 
@@ -107,17 +108,29 @@ Single static page. On load, it renders farmer and depot pickers from embedded J
 
 ## 6. Build Sequence (hours-left, time-boxed)
 
-| Order | Deliverable | Test condition |
-|---|---|---|
-| 1 | Retrofit existing prototype to mobile-first, screen-by-screen navigation (not a long scroll), installable framing | Opens cleanly and is fully usable on an actual phone screen, not just resized desktop |
-| 2 | Counter-presentable "show the clerk" screen, reached from the verdict | Readable at a glance, plain language, works with the page zoomed/screenshotted, no dependency on live network once loaded |
-| 3 | Researched problem screen: scale figures and the Mt Elgon queue account (source 5), persona-segmented copy on why the tool needs to exist | Every stat and the pull-quote are cited; persona copy matches presentation-copy.md |
-| 4 | Script the two Q&A answers: why secondary sources count as grounding, why no agronomic advice | Written down, rehearsed, not improvised |
-| 5 | Lead pitch narrative with the fair-price exposure, not the wasted-trip framing | Pitch opens with "he can't tell a fair price from an inflated one," not "he wastes a trip" |
-| 6 | Static fallback: screenshots or short screen recording of the working app | Exists and is accessible even if live network fails in the room |
-| 7 (stretch) | USSD and GPS/location, per MILESTONES.md, attempted only once 1 through 6 are solid | Meets the test condition stated in MILESTONES.md for whichever milestone is attempted |
+Reordered 2 Sep after plan review (Decision Log). Code work is serial; writing work runs in parallel from the moment step 0 lands; the stretch milestones can start in parallel from step 0 too, since they no longer touch the same file as the page.
+
+| Order | Deliverable | Who | Test condition | Status |
+|---|---|---|---|---|
+| 0 | Extract the rule engine into `engine.js`; wire source 5 into the engine; strip em dashes from the app; fix stale "eight requirements / four sources" copy; test suite over all 36 pairs; Vercel-deployable layout | Mailu + Claude | `npm test` green; page renders all three verdicts from the module with no console errors | **DONE 2 Sep.** Source 5 URL still pending (see Open Items) |
+| 1 | Counter-presentable "show the clerk" view, reached from the verdict. Implemented as a toggle that hides everything but the verdict, the one blocking item, the price and the citation, not as a separate route | Mailu + Claude | Readable at a glance, plain language, survives being zoomed or screenshotted, no network needed once loaded | Next |
+| 2 | Mobile polish of the existing scroll page. Not a screen-by-screen rewrite: the page is already responsive, and routing state would cost hours for no demo gain | Mailu + Claude | Fully usable on an actual phone, not just a resized desktop window | |
+| 3 | Researched problem screen: scale figures and the Mt Elgon queue account (source 5), persona-segmented copy on why the tool needs to exist. Skippable, so the demo can go straight to the checker | Mailu or teammate; copy already exists | Every stat and the pull-quote are cited; persona copy matches presentation-copy.md | Blocked on source 5 URL and figures |
+| 4 | Script the Q&A answers: why secondary sources count as grounding; why no agronomic advice; why build USSD when KIAMIS already has `*6163#` (that code does registration and voucher delivery, not "will this depot serve me and what am I missing") | Teammate, in parallel from step 0 | Written down, rehearsed, not improvised | |
+| 5 | Lead pitch narrative with the fair-price exposure, not the wasted-trip framing | Teammate, in parallel from step 0 | Pitch opens with "he can't tell a fair price from an inflated one," not "he wastes a trip" | |
+| 6 | Static fallback: screenshots or short screen recording of the working app. Capture right after step 3, not at the end | Anyone | Exists and is accessible even if live network fails in the room | |
+| 7 (stretch) | Milestone B (GPS/location) first, then Milestone A (USSD), per MILESTONES.md. B is far cheaper and its fallback is already designed; A carries three external dependencies (sandbox, tunnel, response budget) that can fail in the room | Team via GitHub, in parallel from step 0 | Meets the test condition in MILESTONES.md for whichever is attempted | |
 
 If 7 doesn't make the cutoff, the pitch says so directly: both are scoped in detail, tracked on GitHub, and the call on whether either shipped was made deliberately against the clock, not skipped.
+
+### 6.1 Running and testing locally
+
+```
+npm test        # rule engine: 36 pairs, invariants, citation integrity, house style
+npm run dev     # static server on http://localhost:3000
+```
+
+Deploy: connect the GitHub repo to Vercel with framework preset "Other", no build command, output directory `.`.
 
 ---
 
@@ -125,7 +138,7 @@ If 7 doesn't make the cutoff, the pitch says so directly: both are scoped in det
 
 This is a same-day hackathon build, not a multi-session operated project, so the full session-discipline scaffold (.agent/ folder, git hooks, KNOWLEDGE.md, DECISIONS.md, session boot/close protocol) is deliberately not created today. This is a documented decision (see Decision Log 9.x), not an oversight.
 
-A bare git repository was initialised locally on 2 Sep, with a .gitignore and one commit, specifically so the team can push it to GitHub and contribute to the USSD and location milestones. This is infrastructure for team collaboration, not the full session-discipline framework above, those remain separate decisions. This session has no GitHub credentials and cannot create or push to a remote repository itself; whoever picks this up needs to create the GitHub repo and add it as a remote.
+The GitHub repository exists as of 2 Sep (private, `14leux/kilimo-nitapata`), so the team can contribute to the USSD and location milestones directly. A lightweight checkpoint pad is kept in `tasks/wip.md` and `tasks/context.md` so that a crashed or compacted session can resume from files rather than memory; this is the one piece of the discipline apparatus worth carrying even on a same-day build, because it costs nothing and the day is long. The full `.agent/` boot and close protocol is still not created.
 
 **If this project is picked up again as a real build after the hackathon:** run the full new-project skill scaffold at that point, .agent/ files, git initialisation, session discipline framework, before writing any further code, exactly as the skill normally requires. This document becomes the seed for that process, not a replacement for it.
 
@@ -137,7 +150,10 @@ A bare git repository was initialised locally on 2 Sep, with a .gitignore and on
 |---|---|---|---|---|
 | USSD channel: build or cut | Hours remaining after core V1 is solid; requires extracting the rule engine into a shared module first | Team, via GitHub, per MILESTONES.md | V1 stretch / V2 | PENDING, fully scoped |
 | GPS/location depot suggestion: build or cut | Hours remaining after core V1 is solid | Team, via GitHub, per MILESTONES.md | V1 stretch / V2 | PENDING, fully scoped |
-| Create the GitHub repository and add it as a remote | Someone with GitHub access; this session has none | Mailu or team | Team contribution to the two milestones above | PENDING |
+| Create the GitHub repository and add it as a remote | | Mailu | Team contribution to the two milestones above | DONE 2 Sep: `github.com/14leux/kilimo-nitapata`, private. Collaborator invites still to be sent once milestone 1 is accepted |
+| Source 5 (The Star, 25 Aug 2026): exact headline, article URL, and the problem-scale figures it supports | Mailu has the article | Mailu | Step 3 (problem screen); the sources ledger currently shows "[5] link pending" | PENDING, engine entry exists with an empty URL |
+| Connect the repo to Vercel and confirm the production URL | Vercel account access | Mailu | Demo link, QR code, team deploys | PENDING |
+| Assign owners to Milestones A and B and open GitHub issues for each | Team availability today | Mailu | Parallel work on step 7 | PENDING |
 | Which published documents are canonically authoritative this season, and where they're hosted | Access to primary gazette/KIAMIS documentation | Mailu + team, possibly a MoALD/extension-officer contact | Any real build past V1 | PENDING |
 | Language strategy, Swahili-first, English-first, or mirrored | Team decision | Mailu + team | Any real build past V1 | PENDING |
 | Failure mode when sources conflict or are silent | Design decision | Mailu + team | Any real build past V1 | PENDING, V1 precedent: show both figures rather than asserting one, applied to the price disagreement already found |
@@ -155,7 +171,7 @@ A bare git repository was initialised locally on 2 Sep, with a .gitignore and on
 | 2 Sep 2026 | Project purpose is "strongest hackathon entry," not an operated product, for now | Explicit choice over building for revenue today | Mailu | Not applicable, pre-council |
 | 2 Sep 2026 | Full session-discipline scaffold (.agent/, git hooks, etc.) is skipped for today's build | Disproportionate to an hours-left, live-demo timeline; deferred to a real post-hackathon build if it happens | Mailu, on Claude's recommendation | Not applicable, pre-council |
 | 2 Sep 2026 | No agronomic advice, including no entitlement-by-soil-test carve-out, argued in the presentation, not built | Resolves the tension between Mailu's realism concern and the teammate document's flat exclusion, without weakening the brief's grounding requirement | Mailu | Not applicable, resolved before council |
-| 2 Sep 2026 | Feature-phone reach achieved via proxy relay, not a second USSD channel | Teammate document's persona split (farmer vs. proxy) makes a single smartphone-first interface sufficient for V1 | Mailu (via teammate document) | Accepted, First Principles + Executor |
+| 2 Sep 2026 | Feature-phone reach achieved via proxy relay, not a second USSD channel. **Superseded later the same day** by the entry restoring USSD as a scoped stretch milestone; left here as the record | Teammate document's persona split (farmer vs. proxy) makes a single smartphone-first interface sufficient for V1 | Mailu (via teammate document) | Accepted, First Principles + Executor |
 | 2 Sep 2026 | Location/GPS is a must-build, for V2, not V1, and is named explicitly in the presentation | Resolves the one genuine council disagreement: not load-bearing to the core mechanism (First Principles), but a stated requirement worth being honest about rather than silently dropping | Mailu | Council flagged as the one unresolved disagreement; resolved by Mailu |
 | 2 Sep 2026 | Retrofit the existing prototype rather than rebuild from scratch | The rule engine, citation model, and verdict logic already work; remaining hours should go to presentation-layer work | Mailu (accepted council recommendation) | Accepted, First Principles + Executor |
 | 2 Sep 2026 | Add a counter-presentable "show the clerk" screen | This is the document's actual stated design goal, not a nice-to-have | Mailu (accepted council recommendation) | Accepted, Executor, reinforced by Outsider |
@@ -166,6 +182,12 @@ A bare git repository was initialised locally on 2 Sep, with a .gitignore and on
 | 2 Sep 2026 | The Star's 25 Aug 2026 investigative piece added as source 5, cited for the app's new problem-scale screen and used to correct "four sources" language throughout the build and this document | The strongest, most current, most directly relevant source found in the original research wasn't yet wired into the product's own citation system | Claude, on the day's research already in hand | Not applicable, correction, not a new finding |
 | 2 Sep 2026 | Local git repository initialised for the project, no remote; pushing to GitHub is on the team | This session has no GitHub credentials; a bare local repo is still useful groundwork for whoever picks up the milestones | Claude, per Mailu's request for the team to contribute on GitHub | Not applicable, infrastructure, not a council-scope decision |
 | 2 Sep 2026 | Persistent style rule enforced retroactively across the app, the foundation document, and all copy: no em dashes | Standing project instruction is non-negotiable; earlier drafts used them and were corrected once noticed | Claude, self-corrected | Not applicable, house style, not a council-scope decision |
+| 2 Sep 2026 | The Artifact prototype is folded into this repo as `index.html` and no longer maintained as a standalone artifact | One copy of the product; the artifact could not be deployed by the team and could not load a shared module | Mailu, after plan review | Not applicable, post-council |
+| 2 Sep 2026 | Rule engine extracted into `engine.js` as step 0 of V1, not step 1 of the USSD stretch | Unblocks both milestones for parallel work, makes the 36-pair verdict test possible, and removes the "two copies drift" risk MILESTONES.md itself named as the most likely embarrassment | Mailu, after plan review | Not applicable, post-council |
+| 2 Sep 2026 | Hosting moves from Claude Artifact to Vercel, deployed from the GitHub repo | Team can deploy; page head is under our control (manifest becomes possible); a serverless `api/` folder gives Milestone A a home in the same repo with the same engine. Resolves the contradiction between the old §3 (PWA installable) and old §2.3 (Artifact can't do a manifest) | Mailu, after plan review | Not applicable, post-council |
+| 2 Sep 2026 | Build sequence reordered: engine first, clerk view before mobile polish, writing tasks parallelised, fallback captured early. Screen-by-screen navigation dropped in favour of keeping the scroll page and adding a clerk-view toggle | Screen-by-screen routing costs hours for no demo gain on a page that is already responsive; the clerk view is the stated design goal so it comes first | Mailu, after plan review | Not applicable, post-council |
+| 2 Sep 2026 | Milestone B (GPS/location) sequenced before Milestone A (USSD) | B has no server, no sandbox signup, no tunnel and no response budget, and its fallback is already designed; A is the bigger story but has three external dependencies that can fail in the room | Mailu, after plan review | Not applicable, post-council |
+| 2 Sep 2026 | Lightweight checkpoint files (`tasks/wip.md`, `tasks/context.md`) kept even on the hackathon build; full `.agent/` protocol still deferred | Zero cost, and protects a long day of work from a crashed or compacted session | Mailu | Not applicable, infrastructure |
 
 ### 9.1 Council findings, full record
 
@@ -205,3 +227,5 @@ None, all five settled recommendations were accepted without objection.
 Start with Section 1 for what this is and why. Section 2 for what's in and out of today's build. Section 6 for the actual hours-left punch list. Section 9 for why each call was made, including the one the council couldn't settle on its own and the one the team overturned later the same day. Section 8 holds everything genuinely still open, none of it blocks today's build.
 
 Two companion files live alongside this one. MILESTONES.md fully scopes the USSD and GPS/location stretch milestones for team contribution, plus the wilder V2 directions researched on request, each with its justification and its honest caveats. presentation-copy.md carries the persona-segmented copy behind the app's new problem screen, written for the pitch, not restated from the teammate document.
+
+The code is `index.html` (the page) and `engine.js` (all data and the verdict function). `tasks/wip.md` is the live checkpoint of what is in progress right now; read it before resuming any session.

@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kilimo, Nitapata?</title>
+<meta name="description" content="Will the depot serve him, what is he still missing, and what does the bag cost. A citation-backed status check for Kenya's fertilizer e-Voucher scheme.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#EDE6D3;
+    --paper-raised:#F6F2E5;
+    --ink:#24201A;
+    --ink-soft:#5E5641;
+    --line:#C9BD9E;
+    --accent:#A5761A;
+    --accent-ink:#3A2C08;
+    --stamp:#2B3A5C;
+    --ok:#2F6B3D;
+    --warn:#95531A;
+    --danger:#8F3327;
+    --shadow:rgba(36,32,26,.14);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#1B1712;
+      --paper-raised:#252017;
+      --ink:#ECE5D2;
+      --ink-soft:#B7AC8F;
+      --line:#4A4030;
+      --accent:#D9A63C;
+      --accent-ink:#2A2013;
+      --stamp:#8CA0D1;
+      --ok:#6FBF7E;
+      --warn:#D98A45;
+      --danger:#E2685A;
+      --shadow:rgba(0,0,0,.45);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#1B1712;
+    --paper-raised:#252017;
+    --ink:#ECE5D2;
+    --ink-soft:#B7AC8F;
+    --line:#4A4030;
+    --accent:#D9A63C;
+    --accent-ink:#2A2013;
+    --stamp:#8CA0D1;
+    --ok:#6FBF7E;
+    --warn:#D98A45;
+    --danger:#E2685A;
+    --shadow:rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    font-size:15px; line-height:1.55;
+  }
+  .wrap{ max-width:760px; margin:0 auto; padding:0 20px 64px; }
+  a{ color:var(--stamp); }
+  h1,h2,h3{ font-family:'Zilla Slab', Georgia, serif; text-wrap:balance; margin:0; }
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .tab-nums{ font-variant-numeric: tabular-nums; }
+
+  /* masthead */
+  header.masthead{
+    border-bottom:3px solid var(--ink);
+    padding:22px 20px 16px;
+    background:var(--paper);
+  }
+  .masthead-inner{ max-width:760px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; }
+  .eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); }
+  header.masthead h1{ font-size:34px; font-weight:700; margin-top:4px; }
+  header.masthead h1 .sw{ color:var(--accent); }
+  .masthead-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); text-align:right; line-height:1.7; }
+
+  /* scope banner */
+  .scope{
+    margin:20px 0 8px; padding:14px 16px;
+    border:1px solid var(--line); border-left:4px solid var(--stamp);
+    background:var(--paper-raised); font-size:13.5px; color:var(--ink-soft);
+  }
+  .scope b{ color:var(--ink); }
+  .scope-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
+  .scope-item{ font-size:12.5px; }
+  .scope-item .tag{ display:block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--danger); margin-bottom:2px; }
+
+  section{ margin-top:40px; }
+  .section-head{ display:flex; align-items:baseline; gap:10px; border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:18px; }
+  .section-num{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent); }
+  .section-head h2{ font-size:20px; }
+
+  /* form */
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px; }
+  select{
+    width:100%; font:inherit; font-size:14.5px; padding:11px 12px;
+    background:var(--paper-raised); color:var(--ink);
+    border:1px solid var(--line); border-radius:2px;
+    appearance:none;
+    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path d="M2 4l5 5 5-5" fill="none" stroke="%235E5641" stroke-width="1.6"/></svg>');
+    background-repeat:no-repeat; background-position:right 12px center;
+  }
+  select:focus-visible, button:focus-visible, summary:focus-visible{ outline:2px solid var(--stamp); outline-offset:2px; }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:560px){ .form-grid{ grid-template-columns:1fr; } .scope-grid{ grid-template-columns:1fr; } }
+  button.check{
+    width:100%; margin-top:4px; padding:13px; font:inherit; font-weight:600; font-size:14.5px;
+    background:var(--ink); color:var(--paper); border:none; border-radius:2px; cursor:pointer;
+    letter-spacing:.02em;
+  }
+  button.check:hover{ background:var(--accent-ink); }
+
+  /* verdict stamp */
+  .verdict-row{ display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+  .stamp{
+    flex:0 0 auto; width:132px; height:132px; border-radius:50%;
+    border:3px dashed currentColor; display:flex; align-items:center; justify-content:center;
+    text-align:center; transform:rotate(-7deg); padding:10px;
+    font-family:'Zilla Slab', serif; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
+    transition:transform .25s ease;
+  }
+  .stamp.ok{ color:var(--ok); }
+  .stamp.warn{ color:var(--warn); }
+  .stamp.danger{ color:var(--danger); }
+  .stamp span{ font-size:15px; line-height:1.2; }
+  @media (prefers-reduced-motion:no-preference){
+    .stamp.pop{ animation: thump .32s ease; }
+    @keyframes thump{ 0%{ transform:rotate(-7deg) scale(1.4); opacity:0; } 70%{ transform:rotate(-7deg) scale(0.96);} 100%{ transform:rotate(-7deg) scale(1);} }
+  }
+  .verdict-copy{ flex:1 1 260px; }
+  .verdict-copy .why{ font-size:14px; color:var(--ink-soft); margin-top:6px; }
+  .verdict-copy .who{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); margin-bottom:4px; }
+
+  /* ledger rows */
+  .ledger{ border-top:1px solid var(--line); }
+  .ledger-row{ display:grid; grid-template-columns:26px 1fr auto; gap:12px; align-items:start; padding:12px 0; border-bottom:1px solid var(--line); }
+  .ledger-row .mark{ font-size:16px; line-height:1.4; }
+  .ledger-row.pass .mark{ color:var(--ok); }
+  .ledger-row.fail .mark{ color:var(--danger); }
+  .ledger-row .desc{ font-size:14px; }
+  .ledger-row .desc .req-title{ font-weight:600; }
+  .ledger-row .cite{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--stamp); white-space:nowrap; align-self:start; padding-top:2px; }
+  .all-clear{ padding:14px 0; color:var(--ink-soft); font-size:14px; font-style:italic; }
+
+  /* cost */
+  .price-row{ display:grid; grid-template-columns:1fr auto; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); align-items:baseline; }
+  .price-row:first-of-type{ border-top:1px solid var(--line); }
+  .price-row .label{ font-size:14px; }
+  .price-row .amount{ font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:500; }
+  .price-note{ margin-top:12px; padding:12px 14px; background:var(--paper-raised); border:1px solid var(--line); font-size:13px; color:var(--ink-soft); }
+
+  /* sources */
+  .src-row{ display:grid; grid-template-columns:28px 1fr; gap:10px; padding:12px 0; border-bottom:1px solid var(--line); font-size:13.5px; }
+  .src-row:first-child{ border-top:1px solid var(--line); }
+  .src-num{ font-family:'IBM Plex Mono',monospace; color:var(--accent); }
+  .src-title{ font-weight:600; }
+  .src-pending{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--warn); margin-left:6px; }
+  .src-meta{ color:var(--ink-soft); font-size:12.5px; margin-top:2px; }
+  .src-grounds{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
+  .src-grounds .tag{ font-family:'IBM Plex Mono',monospace; background:var(--paper-raised); border:1px solid var(--line); padding:1px 6px; border-radius:2px; margin-right:4px; display:inline-block; margin-top:4px; }
+
+  cite.fn{ font-style:normal; }
+  cite.fn a{ font-family:'IBM Plex Mono',monospace; font-size:11px; text-decoration:none; color:var(--stamp); vertical-align:super; margin-left:1px; }
+
+  details.how{ margin-top:40px; border:1px solid var(--line); background:var(--paper-raised); padding:2px 16px; }
+  details.how summary{ cursor:pointer; padding:12px 0; font-weight:600; font-size:14px; }
+  details.how .how-body{ padding-bottom:16px; font-size:13.5px; color:var(--ink-soft); }
+  details.how .how-body p{ margin:0 0 10px; }
+
+  footer{ margin-top:56px; padding-top:16px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-soft); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="eyebrow">Fertilizer e&#8209;Voucher &middot; status lookup</div>
+      <h1>Kilimo, <span class="sw">Nitapata?</span></h1>
+    </div>
+    <div class="masthead-meta">Grounded in published reporting on<br>Kenya's e&#8209;Voucher / KIAMIS scheme<br>Sources current as of 2 Sep 2026</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="scope">
+    <b>What this is.</b> A status check for the fertilizer subsidy e&#8209;Voucher scheme: whether a given depot will serve a given registered farmer, exactly what is still missing, and what the bag is documented to cost. Each answer is footnoted to the source it came from.
+    <div class="scope-grid">
+      <div class="scope-item"><span class="tag">Not this</span>Buying, selling or reserving fertilizer. No marketplace function.</div>
+      <div class="scope-item"><span class="tag">Not this</span>Fertilizer or crop advice. No agronomic recommendations.</div>
+      <div class="scope-item"><span class="tag">Not this</span>M&#8209;Pesa or any payment. Nothing here moves money.</div>
+    </div>
+  </div>
+
+  <section id="check">
+    <div class="section-head"><span class="section-num">01</span><h2>Check a status</h2></div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="farmer-select">Registered farmer (sample record)</label>
+        <select id="farmer-select"></select>
+      </div>
+      <div class="field">
+        <label for="depot-select">Depot / redemption point</label>
+        <select id="depot-select"></select>
+      </div>
+    </div>
+    <button class="check" id="check-btn" type="button">Check this depot for this farmer</button>
+  </section>
+
+  <section id="verdict-section">
+    <div class="section-head"><span class="section-num">02</span><h2>Will the depot serve him?</h2></div>
+    <div class="verdict-row">
+      <div class="stamp ok" id="stamp">
+        <span id="stamp-text">SERVED</span>
+      </div>
+      <div class="verdict-copy">
+        <div class="who" id="verdict-who">Farmer &middot; Depot</div>
+        <div class="why" id="verdict-why">Reason appears here.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gaps-section">
+    <div class="section-head"><span class="section-num">03</span><h2>What he still lacks</h2></div>
+    <div class="ledger" id="gaps-ledger"></div>
+  </section>
+
+  <section id="cost-section">
+    <div class="section-head"><span class="section-num">04</span><h2>What the bag costs</h2></div>
+    <div id="price-rows"></div>
+    <div class="price-note">Two of the five sources below report different capped prices, a year apart. Treat both as reported figures, not a guarantee. The depot's posted price on the day governs.</div>
+  </section>
+
+  <section id="sources-section">
+    <div class="section-head"><span class="section-num">05</span><h2>Sources</h2></div>
+    <div id="sources-ledger"></div>
+  </section>
+
+  <details class="how">
+    <summary>How this tool decides &amp; where its data comes from</summary>
+    <div class="how-body">
+      <p>The six requirements in sections 01 to 03 and the two prices in section 04 are transcribed from the five published news and analysis sources listed in section 05, not from the underlying gazette notice or the KIAMIS system's own user manual, which were not publicly retrievable at build time. Where sources disagree (as with price), both figures are shown with their date and source rather than one being picked as correct.</p>
+      <p>The farmer and depot records in the two dropdowns above are sample data built for this demo, not a live feed from KIAMIS or any county register. Swapping in a real registry lookup and an authoritative document set would be the next step past a hackathon build.</p>
+      <p>The match between a farmer and a depot is decided by a fixed rule table, not a language model: each requirement is checked against the selected farmer's record, each depot carries its own authorisation flag, and the verdict is whichever is worse of the two. Nothing is inferred or guessed.</p>
+    </div>
+  </details>
+
+  <footer>
+    <span>Built for the Claude Impact Lab, Nairobi &middot; informational status check only</span>
+    <span>Not affiliated with the Ministry of Agriculture or KIAMIS</span>
+  </footer>
+</div>
+
+<script type="module">
+  import { SOURCES, PRICES, FARMERS, DEPOTS, VERDICT_LABEL, evaluate, findFarmer, findDepot } from './engine.js';
+
+  const $ = (id) => document.getElementById(id);
+
+  function cite(ids){
+    if(!ids || !ids.length) return '';
+    return '<cite class="fn">' + ids.map((i) => '<a href="#src-'+i+'">['+i+']</a>').join('') + '</cite>';
+  }
+
+  function fillSelect(sel, items, labelFn){
+    sel.innerHTML = items.map((it) => '<option value="'+it.id+'">'+labelFn(it)+'</option>').join('');
+  }
+
+  fillSelect($('farmer-select'), FARMERS, (f) => f.name + ' · ' + f.id + ' · ' + f.county);
+  fillSelect($('depot-select'), DEPOTS, (d) => d.name + ' · ' + d.county);
+
+  function renderSources(){
+    $('sources-ledger').innerHTML = SOURCES.map((s) => {
+      const title = s.url
+        ? '<a href="'+s.url+'" target="_blank" rel="noopener">'+s.title+'</a>'
+        : s.title + '<span class="src-pending">link pending</span>';
+      return '<div class="src-row" id="src-'+s.id+'">' +
+        '<div class="src-num">['+s.id+']</div>' +
+        '<div>' +
+          '<div class="src-title">'+title+'</div>' +
+          '<div class="src-meta">'+s.pub+'</div>' +
+          '<div class="src-grounds">' + s.grounds.map((g) => '<span class="tag">'+g+'</span>').join('') + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderPrices(){
+    $('price-rows').innerHTML = PRICES.map((p) =>
+      '<div class="price-row">' +
+        '<div class="label">'+p.label+' <span style="color:var(--ink-soft); font-size:12px;">('+p.note+')</span></div>' +
+        '<div class="amount tab-nums">'+p.amount+' '+cite(p.src)+'</div>' +
+      '</div>'
+    ).join('');
+  }
+
+  function render(){
+    const farmer = findFarmer($('farmer-select').value);
+    const depot = findDepot($('depot-select').value);
+    const res = evaluate(farmer, depot);
+
+    const stampEl = $('stamp');
+    stampEl.className = 'stamp ' + res.verdict;
+    $('stamp-text').textContent = VERDICT_LABEL[res.verdict];
+    void stampEl.offsetWidth;
+    stampEl.classList.add('pop');
+
+    $('verdict-who').textContent = farmer.name + ' (' + farmer.id + ', ' + farmer.county + ')  →  ' + depot.name;
+    $('verdict-why').innerHTML = res.reason.text + cite(res.reason.src);
+
+    const rows = res.checks.map((c) =>
+      '<div class="ledger-row '+(c.pass?'pass':'fail')+'">' +
+        '<div class="mark">'+(c.pass?'✓':'✗')+'</div>' +
+        '<div class="desc"><span class="req-title">'+c.title+'</span>'+(c.detail ? ' ('+c.detail+')' : '')+'</div>' +
+        '<div class="cite">'+cite(c.src)+'</div>' +
+      '</div>'
+    ).join('');
+
+    let lead = '';
+    if(!res.depotOK){
+      lead = '<div class="all-clear">Depot authorisation is the blocking issue here. See section 02. Farmer-side requirements are listed below for reference.</div>';
+    } else if(res.gaps.length === 0){
+      lead = '<div class="all-clear">Nothing outstanding. All requirements below are already met.</div>';
+    }
+    $('gaps-ledger').innerHTML = lead + rows;
+  }
+
+  $('check-btn').addEventListener('click', render);
+  $('farmer-select').addEventListener('change', render);
+  $('depot-select').addEventListener('change', render);
+
+  renderSources();
+  renderPrices();
+  render();
+</script>
+</body>
+</html>

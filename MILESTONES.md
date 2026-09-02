@@ -2,48 +2,54 @@
 
 Scoped 2 September 2026, in response to team pushback on deferring USSD and location to V2. Both are back in scope, fully specified below, tracked as milestones a team member can pick up independently. Whether either actually ships in the demo gets decided closer to the cutoff, based on hours actually remaining, not decided here. Nothing below blocks the current build, which already works without either.
 
-Push this file, and the rest of the project, to a real GitHub repository so the team can work against it directly. This session doesn't have GitHub access to create or push a repo itself, so that step is on whoever picks this up: create the repo, add these files, and open issues or a project board from the milestones below if that's useful.
+The repository is live at `github.com/14leux/kilimo-nitapata` (private). Open issues or a project board from the milestones below if that's useful.
+
+**Sequencing, decided 2 Sep after plan review: Milestone B first, then A.** B has no server, no third-party signup, no tunnel, and its fallback is already designed. A is the bigger story but carries three external dependencies that can fail in the room. Both depend on the shared rule engine, which is already extracted (`engine.js`, covered by `npm test`), so both can start now and in parallel with the core V1 work.
+
+**Ground rule for both:** import from `engine.js`. Never copy farmer, depot, requirement, or price data into another file, and never reimplement `evaluate()`. If a channel needs something the engine doesn't expose, add it to the engine and a test for it.
 
 ---
 
-## Milestone A: USSD channel (feature phones, direct)
-
-**What it proves:** the farmer himself, not just his proxy, can get the same verdict on a basic phone, no smartphone or data bundle required.
-
-**Why it's a structural change, not just a new screen:** the current build is a single static page with no backend. USSD needs a server that Africa's Talking can send an HTTP POST to on every keypress. That server has to compute the same verdict the web app computes, so before writing any USSD code, pull the rule engine (the farmer, depot, and requirement data, and the function that turns a farmer-plus-depot pair into a verdict) out of the page and into its own module both the web app and the USSD server import. Two copies of that logic drifting apart is the single most likely way this build embarrasses itself later, so this extraction is step one, not a nice-to-have.
-
-**Confirmed from Africa's Talking's own documentation and two third-party developer guides:** a free sandbox exists for building and testing, no telco agreement needed, with a working test shortcode and an in-browser simulator. The protocol is a simple HTTP request-response loop: the user dials a shortcode, the operator opens a session and posts it to your webhook with the phone number, session ID, service code, and a `text` field that accumulates every input the user has typed so far, separated by `*`. The server replies with plain text starting `CON` to keep the session open and show another menu, or `END` to close it and show a final message. Sessions expire after roughly 180 seconds of inactivity, and each response is expected back within about 10 seconds.
-
-**What a real shortcode costs, later, not for the hackathon:** a shared code runs roughly Ksh 3,000 a month plus a Ksh 5,000 setup fee; a dedicated code is closer to Ksh 10,000 a month plus regulator allocation fees, and either way carrier approval (Safaricom especially) takes two to four weeks. That means the hackathon demo, if it happens, runs on the free sandbox simulator, not a real phone call. That's a fine demo of the mechanism, and worth saying plainly rather than implying it's a live shortcode.
-
-**Build steps:**
-1. Extract the rule engine into a shared module, used by both the web app and the USSD server.
-2. Stand up a small server (Node is the path of least resistance given Africa's Talking's own examples) with a single POST endpoint implementing the CON/END protocol.
-3. Design the menu tree: welcome, pick a sample farmer, pick a depot, show the verdict and the single most important missing item and the price, in plain text, in the roughly 140-160 characters a USSD screen actually fits, which forces much shorter language than the web app's full ledger.
-4. Sign up for the sandbox, note the test shortcode, and point Africa's Talking's callback setting at the server (a tunnelling tool is the fastest way to get a public URL for local development during the hackathon itself).
-5. Run the full flow in the built-in simulator for every sample farmer and depot pair already in the web app.
-
-**Test condition:** dialling the test shortcode in the simulator and completing the flow returns the same verdict, for the same farmer and depot, that the web app shows, within the response-time budget above.
-
-**Owner:** open.
-
----
-
-## Milestone B: Location / GPS depot suggestion
+## Milestone B: Location / GPS depot suggestion (first)
 
 **What it proves:** the app can point a farmer toward the nearest depot without him first knowing which one to pick, closing the gap between "here's a list" and "here's the one near you."
 
 **Why the data doesn't exist yet:** no public list of depot or agrovet coordinates was found anywhere in the research behind this build, only the count (103 NCPB depots, 281 last-mile points nationally). The demo depots already in the app are named after real towns, though, so an honest interim dataset is a small hand-built table of approximate town-centre coordinates for those towns, clearly labelled as approximate, not the depot's actual address.
 
 **Build steps:**
-1. Add a "use my location" control to the check screen using the browser's Geolocation API, which requires the user to grant permission.
-2. Build the small approximate-coordinate table for the demo depots' towns.
-3. Compute straight-line distance from the farmer's position to each authorised depot (the haversine formula, plain JavaScript, no backend needed) and sort the depot picker so the nearest authorised one is suggested first.
-4. Fall back to manual selection, by county or ward, when permission is denied or the API is unavailable, which is common on shared or demo devices. This fallback is worth building well, not as an afterthought: KIAMIS itself organises farmers by ward rather than GPS point, so a ward-level picker is arguably the more realistic long-run design anyway, with live GPS as a convenience layered on top.
+1. Add a `coords: { lat, lng, approx: true }` field to each depot record in `engine.js`, using town-centre coordinates. Export a `nearestDepots(lat, lng)` function from the engine (haversine, plain JS) that returns authorised depots sorted by distance. Add a test.
+2. Add a "use my location" control to the check screen in `index.html` using the browser's Geolocation API, which requires the user to grant permission.
+3. On success, re-sort the depot picker so the nearest authorised depot is suggested first, with the approximate distance shown and the word "approx." next to it.
+4. Fall back to manual selection, by county, when permission is denied or the API is unavailable, which is common on shared or demo devices. This fallback is worth building well, not as an afterthought: KIAMIS itself organises farmers by ward rather than GPS point, so a ward-level picker is arguably the more realistic long-run design anyway, with live GPS as a convenience layered on top.
 
-**Test condition:** on a phone with location permission granted, the suggested depot is the nearest authorised one in the demo set by straight-line distance to its town centre; on denial, the manual picker appears and the rest of the flow is unaffected.
+**Test condition:** on a phone with location permission granted, the suggested depot is the nearest authorised one in the demo set by straight-line distance to its town centre; on denial, the manual picker appears and the rest of the flow is unaffected. `npm test` covers `nearestDepots` for at least one known position.
 
 **Risk worth naming out loud if this demos live:** a judge's own device may deny or mis-report location in the room. Don't build the pitch's critical path through a live permission prompt; have the manual fallback ready to show instead.
+
+**Owner:** open.
+
+---
+
+## Milestone A: USSD channel (feature phones, direct) (second)
+
+**What it proves:** the farmer himself, not just his proxy, can get the same verdict on a basic phone, no smartphone or data bundle required.
+
+**Why it's a structural change, not just a new screen:** the web app is a static page. USSD needs an endpoint that Africa's Talking can send an HTTP POST to on every keypress. That endpoint has to compute the same verdict the web app computes. The rule engine is already extracted into `engine.js` for exactly this reason (done 2 Sep), so the USSD handler imports it; it never carries its own copy. Under Vercel hosting, the handler is a serverless function at `api/ussd.js` in this same repo, which means no separate server, no separate deploy, and one engine.
+
+**Also worth knowing before you start:** KIAMIS already has a USSD code, `*6163#` (source 3). A judge who knows it will ask why we're building USSD for a scheme that has USSD. The answer: that code does registration and voucher delivery, not "will this depot serve me and what am I missing." Put that in the scripted Q&A.
+
+**Confirmed from Africa's Talking's own documentation and two third-party developer guides:** a free sandbox exists for building and testing, no telco agreement needed, with a working test shortcode and an in-browser simulator. The protocol is a simple HTTP request-response loop: the user dials a shortcode, the operator opens a session and posts it to your webhook with the phone number, session ID, service code, and a `text` field that accumulates every input the user has typed so far, separated by `*`. The server replies with plain text starting `CON` to keep the session open and show another menu, or `END` to close it and show a final message. Sessions expire after roughly 180 seconds of inactivity, and each response is expected back within about 10 seconds.
+
+**What a real shortcode costs, later, not for the hackathon:** a shared code runs roughly Ksh 3,000 a month plus a Ksh 5,000 setup fee; a dedicated code is closer to Ksh 10,000 a month plus regulator allocation fees, and either way carrier approval (Safaricom especially) takes two to four weeks. That means the hackathon demo, if it happens, runs on the free sandbox simulator, not a real phone call. That's a fine demo of the mechanism, and worth saying plainly rather than implying it's a live shortcode.
+
+**Build steps:**
+1. ~~Extract the rule engine into a shared module.~~ Done, see `engine.js`.
+2. Add a `ussdText(result)` formatter to `engine.js` that renders a verdict as plain text within the roughly 140-160 characters a USSD screen actually fits: the verdict word, the single most important missing item, and the price. Test it for every pair: never over the character budget, never an em dash.
+3. Create `api/ussd.js`, a Vercel serverless function with a single POST handler implementing the CON/END protocol. Menu tree: welcome, pick a sample farmer, pick a depot, show `ussdText`. Parse the accumulated `text` field on `*`.
+4. Sign up for the Africa's Talking sandbox, note the test shortcode, and point the callback setting at the deployed Vercel URL (or a tunnel to `vercel dev` for local iteration).
+5. Run the full flow in the built-in simulator for every sample farmer and depot pair already in the web app.
+
+**Test condition:** dialling the test shortcode in the simulator and completing the flow returns the same verdict, for the same farmer and depot, that the web app shows, within the response-time budget above. Because both channels call the same `evaluate()`, the automated guarantee is `npm test`; the simulator run is the demonstration.
 
 **Owner:** open.
 
