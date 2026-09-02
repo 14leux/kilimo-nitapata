@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL } from "../engine.js";
+import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL, blockingItem, clerkSummary } from "../engine.js";
 
 const pairs = FARMERS.flatMap((f) => DEPOTS.map((d) => [f, d]));
 
@@ -59,8 +59,31 @@ test("every citation points at a source that exists", () => {
   for (const id of cited) assert.ok(ids.has(id), `dangling citation [${id}]`);
 });
 
+test("blocking item: depot outranks farmer; otherwise first gap; null when served", () => {
+  for (const [f, d] of pairs) {
+    const r = evaluate(f, d);
+    const b = blockingItem(r, d);
+    if (!d.authorized) assert.equal(b.key, "depot", `${f.id} x ${d.id}`);
+    else if (r.gaps.length) assert.equal(b.key, r.gaps[0].key, `${f.id} x ${d.id}`);
+    else assert.equal(b, null, `${f.id} x ${d.id}`);
+  }
+});
+
+test("clerk summary agrees with evaluate and resolves every citation", () => {
+  for (const [f, d] of pairs) {
+    const s = clerkSummary(f, d);
+    const r = evaluate(f, d);
+    assert.equal(s.verdict, r.verdict, `${f.id} x ${d.id}`);
+    assert.equal(s.label, VERDICT_LABEL[r.verdict]);
+    assert.ok(s.headline.length > 20 && s.headline.length < 260, `${f.id} x ${d.id} headline length ${s.headline.length}`);
+    assert.equal(Boolean(s.blocking), r.verdict !== "ok", `${f.id} x ${d.id}`);
+    assert.ok(s.sources.length > 0);
+    for (const src of s.sources) assert.ok(src && src.id, `${f.id} x ${d.id} unresolved source`);
+  }
+});
+
 test("house style: no em dashes anywhere in engine text", () => {
   const blob = JSON.stringify({ SOURCES, REQUIREMENTS, PRICES, FARMERS, DEPOTS })
-    + pairs.map(([f, d]) => evaluate(f, d).reason.text).join("");
+    + pairs.map(([f, d]) => evaluate(f, d).reason.text + clerkSummary(f, d).headline).join("");
   assert.equal(blob.includes("—"), false, "em dash found in engine copy");
 });

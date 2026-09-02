@@ -174,6 +174,50 @@
   details.how .how-body p{ margin:0 0 10px; }
 
   footer{ margin-top:56px; padding-top:16px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-soft); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+
+  /* clerk view: reached from the verdict, meant to be shown at the counter,
+     zoomed or screenshotted. Large type, high contrast, minimal chrome. */
+  button.show-clerk{
+    margin-top:18px; padding:12px 16px; font:inherit; font-weight:600; font-size:13.5px;
+    background:transparent; color:var(--stamp); border:1.5px solid var(--stamp); border-radius:2px;
+    cursor:pointer; letter-spacing:.02em;
+  }
+  button.show-clerk:hover{ background:var(--stamp); color:var(--paper); }
+  .wrap.clerk-active > *:not(#clerk-section){ display:none; }
+  #clerk-section{ display:none; }
+  .wrap.clerk-active #clerk-section{ display:block; margin-top:0; }
+  #clerk-section .clerk-card{
+    background:var(--paper-raised); border:2px solid var(--ink); padding:24px 20px;
+    margin-top:20px;
+  }
+  #clerk-section .clerk-eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); }
+  #clerk-section .clerk-verdict{
+    font-family:'Zilla Slab', serif; font-weight:700; font-size:30px; margin-top:6px;
+    text-transform:uppercase; letter-spacing:.02em;
+  }
+  #clerk-section .clerk-verdict.ok{ color:var(--ok); }
+  #clerk-section .clerk-verdict.warn{ color:var(--warn); }
+  #clerk-section .clerk-verdict.danger{ color:var(--danger); }
+  #clerk-section .clerk-who{ font-size:15px; margin-top:10px; font-weight:600; }
+  #clerk-section .clerk-headline{ font-size:16px; line-height:1.5; margin-top:8px; }
+  #clerk-section .clerk-block{
+    margin-top:18px; padding:14px 16px; border-left:4px solid var(--danger);
+    background:var(--paper); font-size:15px; font-weight:600;
+  }
+  #clerk-section .clerk-block.warn{ border-left-color:var(--warn); }
+  #clerk-section .clerk-more{ font-size:13px; color:var(--ink-soft); margin-top:6px; font-weight:400; }
+  #clerk-section .clerk-price{
+    margin-top:18px; padding-top:14px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:baseline; font-size:15px;
+  }
+  #clerk-section .clerk-price .amount{ font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:600; }
+  #clerk-section .clerk-sources{ margin-top:18px; padding-top:14px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-soft); }
+  #clerk-section .clerk-sources div{ margin-top:4px; }
+  #clerk-section .clerk-note{ margin-top:16px; font-size:11.5px; color:var(--ink-soft); font-style:italic; }
+  button.back-from-clerk{
+    margin-top:20px; padding:11px 16px; font:inherit; font-weight:600; font-size:13.5px;
+    background:var(--ink); color:var(--paper); border:none; border-radius:2px; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -188,7 +232,7 @@
   </div>
 </header>
 
-<div class="wrap">
+<div class="wrap" id="page-wrap">
 
   <div class="scope">
     <b>What this is.</b> A status check for the fertilizer subsidy e&#8209;Voucher scheme: whether a given depot will serve a given registered farmer, exactly what is still missing, and what the bag is documented to cost. Each answer is footnoted to the source it came from.
@@ -225,6 +269,27 @@
         <div class="why" id="verdict-why">Reason appears here.</div>
       </div>
     </div>
+    <button class="show-clerk" id="show-clerk-btn" type="button">Show this at the counter</button>
+  </section>
+
+  <section id="clerk-section" aria-label="Counter view">
+    <div class="clerk-card">
+      <div class="clerk-eyebrow">Kilimo, Nitapata? &middot; status shown to depot staff</div>
+      <div class="clerk-verdict" id="clerk-verdict">SERVED</div>
+      <div class="clerk-who" id="clerk-who">Farmer &middot; Depot</div>
+      <div class="clerk-headline" id="clerk-headline">Summary appears here.</div>
+      <div class="clerk-block" id="clerk-block" hidden>
+        <div id="clerk-block-text"></div>
+        <div class="clerk-more" id="clerk-more"></div>
+      </div>
+      <div class="clerk-price" id="clerk-price-row">
+        <span>Price</span>
+        <span class="amount" id="clerk-price"></span>
+      </div>
+      <div class="clerk-sources" id="clerk-sources"></div>
+      <div class="clerk-note">Sample data for demonstration. Not a live KIAMIS or county record.</div>
+    </div>
+    <button class="back-from-clerk" id="back-from-clerk-btn" type="button">Back to full detail</button>
   </section>
 
   <section id="gaps-section">
@@ -259,7 +324,7 @@
 </div>
 
 <script type="module">
-  import { SOURCES, PRICES, FARMERS, DEPOTS, VERDICT_LABEL, evaluate, findFarmer, findDepot } from './engine.js';
+  import { SOURCES, PRICES, FARMERS, DEPOTS, VERDICT_LABEL, evaluate, findFarmer, findDepot, clerkSummary } from './engine.js';
 
   const $ = (id) => document.getElementById(id);
 
@@ -331,9 +396,51 @@
     $('gaps-ledger').innerHTML = lead + rows;
   }
 
+  function renderClerk(){
+    const farmer = findFarmer($('farmer-select').value);
+    const depot = findDepot($('depot-select').value);
+    const s = clerkSummary(farmer, depot);
+
+    const verdictEl = $('clerk-verdict');
+    verdictEl.className = 'clerk-verdict ' + s.verdict;
+    verdictEl.textContent = s.label.toUpperCase();
+    $('clerk-who').textContent = farmer.name + ', ' + farmer.id + '  →  ' + depot.name;
+    $('clerk-headline').textContent = s.headline;
+
+    const blockEl = $('clerk-block');
+    if(s.blocking){
+      blockEl.hidden = false;
+      blockEl.className = 'clerk-block ' + (s.verdict === 'danger' ? '' : 'warn');
+      $('clerk-block-text').textContent = 'Missing: ' + s.blocking.title;
+      $('clerk-more').textContent = s.othersOutstanding > 0
+        ? (s.othersOutstanding === 1 ? '1 more item outstanding.' : s.othersOutstanding + ' more items outstanding.')
+        : '';
+    } else {
+      blockEl.hidden = true;
+    }
+
+    $('clerk-price').textContent = s.price.amount;
+    $('clerk-sources').innerHTML = s.sources.map((src) =>
+      '<div>[' + src.id + '] ' + src.title + ', ' + src.pub + '</div>'
+    ).join('');
+  }
+
+  function openClerk(){
+    renderClerk();
+    $('page-wrap').classList.add('clerk-active');
+    $('clerk-section').scrollIntoView({ behavior: 'instant', block: 'start' });
+  }
+
+  function closeClerk(){
+    $('page-wrap').classList.remove('clerk-active');
+    $('check').scrollIntoView({ behavior: 'instant', block: 'start' });
+  }
+
   $('check-btn').addEventListener('click', render);
   $('farmer-select').addEventListener('change', render);
   $('depot-select').addEventListener('change', render);
+  $('show-clerk-btn').addEventListener('click', openClerk);
+  $('back-from-clerk-btn').addEventListener('click', closeClerk);
 
   renderSources();
   renderPrices();

@@ -2,17 +2,16 @@
 
 Read this first when resuming. Overwrite it whenever the in-progress task changes. Empty "In progress" means nothing was mid-flight.
 
-**Last updated:** 2 Sep 2026, after step 0
+**Last updated:** 2 Sep 2026, after step 1
 
 ## In progress
 
-Nothing mid-flight. Step 0 is complete and committed.
+Nothing mid-flight. Step 1 is complete and committed.
 
 ## Next up (from FOUNDATION.md §6)
 
-1. Step 1: clerk view toggle in `index.html` (hide everything but verdict, one blocking item, price, citation).
-2. Step 2: mobile polish pass on the scroll page.
-3. Step 3: problem screen. Blocked on source 5 URL and figures from Mailu.
+1. Step 2: mobile polish pass on the scroll page (the base page, not the clerk view, which is already mobile-verified).
+2. Step 3: problem screen. Blocked on source 5 URL and figures from Mailu.
 
 ## Waiting on Mailu
 
@@ -24,4 +23,5 @@ Nothing mid-flight. Step 0 is complete and committed.
 
 - Repo seeded and pushed: `github.com/14leux/kilimo-nitapata` (private).
 - Plan review; five decisions logged in FOUNDATION.md §9.
-- Step 0: `engine.js` extracted, `index.html` rewritten against it, 7 tests green, em dashes gone, stale "eight/four" copy fixed, source 5 entry added, Vercel-ready layout, `.claude/launch.json` for local preview.
+- Step 0: `engine.js` extracted, `index.html` rewritten against it, tests green, em dashes gone, stale "eight/four" copy fixed, source 5 entry added, Vercel-ready layout.
+- Step 1: clerk view. `blockingItem()` and `clerkSummary()` added to `engine.js` with tests (9/9 passing). "Show this at the counter" button toggles a stripped, large-type panel: verdict, who, one-line summary, the single blocking item (or none), price, sources, sample-data note, back button. Verified in-browser for Served, Conditional (Otieno K., missing Assistant Chief validation), and Not Served (unlisted agrovet) at both desktop and 375px mobile width. No console errors.

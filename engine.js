@@ -161,3 +161,53 @@ export function evaluate(farmer, depot) {
 /** Lookup helpers shared by every channel. */
 export const findFarmer = (id) => FARMERS.find((f) => f.id === id);
 export const findDepot = (id) => DEPOTS.find((d) => d.id === id);
+export const findSource = (id) => SOURCES.find((s) => s.id === id);
+
+/**
+ * The single most important thing standing between this farmer and a bag,
+ * or null when nothing is. Priority mirrors evaluate(): an unauthorised
+ * depot outranks anything on the farmer's side; then the first failing
+ * requirement in ledger order.
+ */
+export function blockingItem(result, depot) {
+  if (!result.depotOK) {
+    return { key: "depot", title: "Not an authorised redemption point", src: DEPOT_AUTH_SRC };
+  }
+  return result.gaps.length ? result.gaps[0] : null;
+}
+
+/**
+ * Everything a counter clerk needs, in the order he needs it, as plain
+ * data. Short enough to be read aloud. Used by the web clerk view and
+ * reusable by SMS / USSD formatters.
+ */
+export function clerkSummary(farmer, depot) {
+  const result = evaluate(farmer, depot);
+  const blocking = blockingItem(result, depot);
+  const others = Math.max(0, result.gaps.length - (blocking && blocking.key !== "depot" ? 1 : 0));
+
+  let headline;
+  if (result.verdict === "ok") {
+    headline = `${farmer.name}, ${farmer.id}, is registered and cleared. ${depot.name} is an authorised redemption point.`;
+  } else if (!result.depotOK) {
+    headline = `${depot.name} is not an authorised redemption point for the e-Voucher scheme. ${farmer.name} should go to an NCPB depot, cooperative store, KNTC warehouse or registered agrovet.`;
+  } else if (!farmer.registered) {
+    headline = `${farmer.name} has no county or KIAMIS registration on file. No depot can issue a voucher until he is registered.`;
+  } else {
+    headline = `${farmer.name}, ${farmer.id}, is registered. ${result.gaps.length === 1 ? "One item is" : result.gaps.length + " items are"} still outstanding before ${depot.name} can serve him.`;
+  }
+
+  const price = PRICES[0];
+  const citedIds = [...new Set([...(result.reason.src), ...(blocking ? blocking.src : []), ...price.src])];
+
+  return {
+    verdict: result.verdict,
+    label: VERDICT_LABEL[result.verdict],
+    headline,
+    blocking,
+    othersOutstanding: others,
+    allocation: `${farmer.bagsUsed} of ${farmer.bagsAllocated} bags used`,
+    price,
+    sources: citedIds.map(findSource)
+  };
+}
