@@ -188,8 +188,8 @@ export const STRINGS = {
 };
 
 export const VERDICT = {
-  en: { ok: "No sample-record blocker", warn: "Action required", danger: "Cannot confirm readiness" },
-  sw: { ok: "Hakuna kizuizi kwenye rekodi ya mfano", warn: "Hatua inahitajika", danger: "Utayari hauwezi kuthibitishwa" }
+  en: { ok: "Available", warn: "Action required", danger: "Unavailable" },
+  sw: { ok: "Utapata", warn: "Hatua inahitajika", danger: "Hutapata" }
 };
 
 // Requirement titles by engine key. "depot" is the blocking item the engine

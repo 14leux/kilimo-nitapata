@@ -152,6 +152,17 @@ Living log of what has actually shipped, against the sequence in [FOUNDATION.md 
 
 ---
 
+## Step 10, Verdict card wording: Utapata / Hutapata
+
+**Date:** 2 Sep 2026
+**What changed:** `strings.js` `VERDICT`, the words on the big verdict card (answer screen, `v-word`/`v-word-alt`) and the counter card (`c-word`). Per Mailu: `ok` is now Utapata (sw) / Available (en), `danger` is now Hutapata (sw) / Unavailable (en), replacing the more clinical "No sample-record blocker" / "Cannot confirm readiness" pair. `warn` (Hatua inahitajika / Action required) unchanged, wasn't part of the request.
+
+**Real bug caught in the process, not just a content edit:** `sw.js` precaches `strings.js` cache-first, keyed to a `VERSION` string the file's own comment says to bump on every deploy. Changed the content without bumping `VERSION` first, then verified against a browser tab that had an old service worker installed from earlier this session, saw the old wording, assumed the edit hadn't taken, dug in, found the real cause: a live PWA install (or any returning visitor's browser) would have kept serving the old cards until a second background-refreshed visit, the actual demo audience for this change. Bumped `VERSION` to `kn-v4-2026-09-02`. Confirmed the theory by clearing that tab's cache and service worker, which reproduced the stale read, then confirmed the fix in an untouched tab.
+
+**Test:** verified live (not just by reading source) in a clean browser tab: `ok`, `warn`, and `danger` all render correctly on both the answer card and the counter card, in both languages via the alt-language slot. `npm test` 48/48, no em dashes.
+
+---
+
 ## Adding a new entry
 
 Copy the block below to the top of the step-by-step log (not the status table, update that too) when a step finishes. Keep the language plain enough that someone who has not read this session's chat can verify the claim.

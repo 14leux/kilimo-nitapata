@@ -2,7 +2,7 @@
 // Everything the app needs is static, so the whole app is precached and
 // served from cache first. Bump VERSION on every deploy; the old cache is
 // dropped on activate.
-const VERSION = "kn-v3-2026-09-02";
+const VERSION = "kn-v4-2026-09-02";
 const APP = ["./", "./index.html", "./engine.js", "./strings.js", "./manifest.json", "./icon.svg", "./icon-maskable.svg"];
 
 self.addEventListener("install", (e) => {
