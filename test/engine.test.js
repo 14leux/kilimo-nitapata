@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL, blockingItem, clerkSummary, ussdText, USSD_BUDGET, SUBSIDY_GATE, buildSnapshot, DEFAULT_PRICE_PER_BAG, SIGNATURE_KEYS } from "../engine.js";
+import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL, blockingItem, clerkSummary, ussdText, USSD_BUDGET, SUBSIDY_GATE, buildSnapshot, DEFAULT_PRICE_PER_BAG, SIGNATURE_KEYS, releaseText, RELEASE_BUDGET } from "../engine.js";
 
 const pairs = FARMERS.flatMap((f) => DEPOTS.map((d) => [f, d]));
 
@@ -201,4 +201,33 @@ test("snapshot: unreleased subsidy shows as the blocking item and season flag", 
   assert.equal(snap.verdict, "danger");
   assert.equal(snap.blocking.key, "subsidy");
   assert.equal(snap.season.subsidyReleased, false);
+});
+
+test("release text: under the SMS budget for every farmer at their own county depot, both languages", async () => {
+  const { REQ } = await import("../strings.js");
+  const LINK = "https://kilimo.vercel.app/#status/k7Qx9Ab2Cd";
+  assert.ok(LINK.length >= 40);
+  const open = { id: "s1", subsidyReleased: true };
+  for (const [f, d] of pairs) {
+    const snap = buildSnapshot(evaluate(f, d, open), f, d, open, "2026-09-02T00:00:00.000Z");
+    for (const lang of ["en", "sw"]) {
+      const t = releaseText(snap, f, d, lang, REQ[lang]).replace("{link}", LINK);
+      assert.ok(t.length <= RELEASE_BUDGET, `${lang} ${f.id} x ${d.id} is ${t.length} chars: ${t}`);
+      assert.equal(t.includes("—"), false);
+      assert.equal(t.includes("{"), false, "unfilled placeholder");
+      assert.equal(t.includes(".."), false, "double period");
+      assert.ok(t.includes(LINK));
+      if (snap.verdict === "ok") { assert.ok(t.includes(d.name)); assert.ok(t.includes("2,500")); }
+      if (snap.verdict === "warn") for (const g of snap.gaps.slice(0, 2)) assert.ok(t.includes(REQ[lang][g.key]), `${lang} ${f.id} x ${d.id} missing pending item ${g.key}`);
+      if (snap.verdict === "danger") assert.ok(/Do not travel\.|Usisafiri\./.test(t), `${lang} ${f.id} x ${d.id} red must say do not travel`);
+    }
+  }
+});
+
+test("release text: unreleased subsidy is red with the subsidy reason", () => {
+  const f = FARMERS[0], d = DEPOTS[0];
+  const season = { id: "s1", subsidyReleased: false };
+  const snap = buildSnapshot(evaluate(f, d, season), f, d, season, "2026-09-02T00:00:00.000Z");
+  assert.ok(releaseText(snap, f, d, "en").includes("not yet released by government"));
+  assert.ok(releaseText(snap, f, d, "sw").includes("Ruzuku bado haijatolewa"));
 });

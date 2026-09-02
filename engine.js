@@ -324,3 +324,55 @@ export function buildSnapshot(result, farmer, depot, season, now = new Date().to
     computedAt: now
   };
 }
+
+/** SMS budget for a release message: two segments, link included. */
+export const RELEASE_BUDGET = 320;
+
+// Verdict words and action phrases per language. Kept in the engine so a
+// release message is generated in exactly one place; requirement titles
+// come in through `titles` so the engine never imports the UI strings.
+const RELEASE_WORDS = {
+  en: { ok: "SERVED", warn: "CONDITIONAL", danger: "NOT SERVED",
+        go: "Go to {depot}. Carry your ID and Ksh {price} per bag ({bags} bag(s), total Ksh {total}). No other fee.",
+        wait: "Do not travel yet. Pending: {items}. Depot: {depot}. Price Ksh {price} per bag.",
+        stop: "Do not travel. {reason}",
+        sample: "Sample data." },
+  sw: { ok: "UTAPATA", warn: "BADO KUNA KITU", danger: "HUTAPATA",
+        go: "Nenda {depot}. Beba kitambulisho na Ksh {price} kwa mfuko (mifuko {bags}, jumla Ksh {total}). Hakuna ada nyingine.",
+        wait: "Usisafiri bado. Inasubiri: {items}. Kituo: {depot}. Bei Ksh {price} kwa mfuko.",
+        stop: "Usisafiri. {reason}",
+        sample: "Data ya mfano." }
+};
+const RELEASE_REASONS = {
+  en: { subsidy: "The subsidy is not yet released by government.", depot: "{depot} is not an authorised depot.", registered: "You are not registered in the county / KIAMIS system." },
+  sw: { subsidy: "Ruzuku bado haijatolewa na serikali.", depot: "{depot} si kituo kilichoidhinishwa.", registered: "Hujasajiliwa katika mfumo wa kaunti / KIAMIS." }
+};
+const fmt = (n) => Number(n).toLocaleString("en-KE");
+const fill = (t, v) => t.replace(/\{(\w+)\}/g, (_, k) => v[k]);
+
+/**
+ * The message a release sends, from a snapshot. `titles` maps requirement
+ * keys to titles in the target language (pass strings.js REQ[lang]);
+ * defaults to the engine's English titles. `{link}` is left for the sender
+ * to fill. Under RELEASE_BUDGET with a 40-character link for every farmer
+ * in the seed register; the test enforces it.
+ */
+export function releaseText(snapshot, farmer, depot, lang = "en", titles = {}) {
+  const w = RELEASE_WORDS[lang] || RELEASE_WORDS.en;
+  const rz = RELEASE_REASONS[lang] || RELEASE_REASONS.en;
+  const title = (k, fallback) => titles[k] || fallback;
+  const v = { depot: depot.name, price: fmt(snapshot.cost.pricePerBag), bags: snapshot.cost.bagsRemaining, total: fmt(snapshot.cost.total) };
+
+  let body;
+  if (snapshot.verdict === "ok") {
+    body = fill(w.go, v);
+  } else if (snapshot.blocking && ["subsidy", "depot", "registered"].includes(snapshot.blocking.key)) {
+    body = fill(w.stop, { reason: fill(rz[snapshot.blocking.key], v) });
+  } else {
+    const names = snapshot.gaps.map((g) => title(g.key, g.title));
+    const items = names.length > 2 ? names.slice(0, 2).join("; ") + " +" + (names.length - 2) : names.join("; ");
+    body = fill(w.wait, { ...v, items });
+  }
+  const name = farmer.name.replace(/\.$/, "");
+  return `${w[snapshot.verdict]}: ${name}. ${body} ${w.sample} {link}`;
+}
