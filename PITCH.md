@@ -1,6 +1,8 @@
 # Pitch Narrative
 
-The talk track for the live demo. Opens with the fair-price exposure, not the wasted-trip framing, per the plan-review decision recorded in [FOUNDATION.md](FOUNDATION.md) §9. Roughly 90 seconds of talking plus the live demo; adjust pacing to the room, don't cut the opening line.
+The talk track for the live demo. Opens with the fair-price exposure, not the wasted-trip framing, per the plan-review decision recorded in [FOUNDATION.md](FOUNDATION.md) §9. Roughly 2 to 2.5 minutes of talking plus the live demo; adjust pacing to the room. Don't cut the opening line (section 1) or the scale pivot (section 5), those are the two moments that actually change how the room hears the rest, cut from the demo walkthrough (section 3) first if you're short on time.
+
+**Sharpened one-line value proposition**, use this as a slide title or a spoken anchor if you need one sentence: *"Kilimo, Nitapata turns one officer's release into 1,800 farmers who all see the same number, at the same time, before anyone at the counter gets a chance to change the story."*
 
 ---
 
@@ -44,11 +46,27 @@ Say these in this order, they're the app's own stated demo narrative, see FOUNDA
 
 ---
 
-## 5. Close, honestly (10 seconds)
+## 5. The scale pivot (15 to 20 seconds)
 
-> Two more pieces are scoped, not built: a USSD channel for feature phones, and GPS-based depot suggestion. Both are fully specified and tracked on GitHub for the team to pick up. Whether they made today's cutoff came down to hours, not ambition, and that call is on the record, not hidden.
+Added 2 Sep after a council review specifically on sustainability, see `council-transcript-20260902T173000.md` for the full reasoning. This is the part that answers "how does this survive past today," don't skip it for time, it's the difference between a demo and a plan.
 
-If neither B nor A shipped by the time you're presenting, say so in these terms. Don't imply either is live if it isn't; the honest version of this line is stronger than a vague one, see the Decision Log entry on this exact tradeoff.
+> This isn't just a farmer app. A teammate independently built the other half: a sub-county agricultural officer opens a release window, the same engine runs every farmer on her list, and one press sends everyone the same status, at the same moment, before anyone at the counter gets a chance to change the story.
+>
+> Kisumu county's own reported extension officer-to-farmer ratio is one to eighteen hundred. That's the leverage this closes, one release, not eighteen hundred separate conversations, for under a dollar a farmer across SMS, WhatsApp, or USSD.
+
+Say the number. "One to eighteen hundred" and "under a dollar" are both real, both citable, both land in a room faster than the mechanism does.
+
+> We haven't asked a real officer yet whether that helps her or threatens her, whether a system that timestamps exactly when she acted is a convenience or a liability to her specifically. That's the first thing we test next, not a funding round.
+
+This line is doing real work, not just humility. It preempts the sharpest question a good judge could ask ("won't someone not want this transparency?") by naming it first. See the council transcript's Trap Detector section for why this matters more than it looks like it should.
+
+---
+
+## 6. Close, honestly (10 seconds)
+
+> The USSD channel and GPS depot suggestion, both scoped as stretch goals, both actually shipped. USSD runs against a working simulator hitting the real deployed endpoint, live in the app right now, we don't have a registered shortcode yet, that needs an Africa's Talking account this team doesn't have. Location suggestion is fully live.
+
+Say this only if it's still true when you present, check PROGRESS.md's status table first. If something regressed, say what's actually true instead, a wrong claim here is worse than an honest gap.
 
 ---
 
