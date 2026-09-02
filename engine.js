@@ -108,17 +108,28 @@ export function passes(farmer, req) {
   return Boolean(farmer[req.key]);
 }
 
+// The gate the sub-county officer controls: nothing can be collected until
+// the government has released the season's subsidy. Ranked above everything
+// else in evaluate() and blockingItem(). Not a published-source requirement,
+// so it carries no citation.
+export const SUBSIDY_GATE = { key: "subsidy", title: "Subsidy not yet released by government", src: [] };
+
 /**
  * The verdict. Pure, deterministic, no inference.
  *
+ * season is optional. When given and season.subsidyReleased is false, the
+ * verdict is Not Served for every farmer at every depot, ahead of any other
+ * check. Two-argument calls behave exactly as before.
+ *
  * Returns:
- *   verdict  "ok" | "warn" | "danger"
- *   reason   { text, src }   plain-language explanation and the sources behind it
- *   depotOK  boolean         whether the depot itself is an authorised redemption point
- *   checks   every requirement with pass/fail, in ledger order
- *   gaps     the subset of checks that fail
+ *   verdict    "ok" | "warn" | "danger"
+ *   reason     { text, src }   plain-language explanation and the sources behind it
+ *   subsidyOK  boolean         false only when a season says the subsidy is not released
+ *   depotOK    boolean         whether the depot itself is an authorised redemption point
+ *   checks     every requirement with pass/fail, in ledger order
+ *   gaps       the subset of checks that fail
  */
-export function evaluate(farmer, depot) {
+export function evaluate(farmer, depot, season) {
   const checks = REQUIREMENTS.map((r) => ({
     key: r.key,
     title: r.title,
@@ -128,9 +139,16 @@ export function evaluate(farmer, depot) {
   }));
   const gaps = checks.filter((c) => !c.pass);
   const depotOK = depot.authorized;
+  const subsidyOK = !(season && season.subsidyReleased === false);
 
   let verdict, reason;
-  if (!depotOK) {
+  if (!subsidyOK) {
+    verdict = "danger";
+    reason = {
+      text: `The government has not yet released the fertilizer subsidy for this season, so no depot can issue a bag against the voucher, whatever the farmer's own status.`,
+      src: []
+    };
+  } else if (!depotOK) {
     verdict = "danger";
     reason = {
       text: `${depot.name} is not on the authorised redemption list for this scheme, regardless of the farmer's own status. An authorised NCPB depot, cooperative store, KNTC warehouse or registered agrovet is required.`,
@@ -155,7 +173,7 @@ export function evaluate(farmer, depot) {
       src: []
     };
   }
-  return { verdict, reason, depotOK, checks, gaps };
+  return { verdict, reason, subsidyOK, depotOK, checks, gaps };
 }
 
 /** Lookup helpers shared by every channel. */
@@ -170,6 +188,7 @@ export const findSource = (id) => SOURCES.find((s) => s.id === id);
  * requirement in ledger order.
  */
 export function blockingItem(result, depot) {
+  if (result.subsidyOK === false) return SUBSIDY_GATE;
   if (!result.depotOK) {
     return { key: "depot", title: "Not an authorised redemption point", src: DEPOT_AUTH_SRC };
   }
@@ -181,13 +200,15 @@ export function blockingItem(result, depot) {
  * data. Short enough to be read aloud. Used by the web clerk view and
  * reusable by SMS / USSD formatters.
  */
-export function clerkSummary(farmer, depot) {
-  const result = evaluate(farmer, depot);
+export function clerkSummary(farmer, depot, season) {
+  const result = evaluate(farmer, depot, season);
   const blocking = blockingItem(result, depot);
-  const others = Math.max(0, result.gaps.length - (blocking && blocking.key !== "depot" ? 1 : 0));
+  const others = Math.max(0, result.gaps.length - (blocking && !["depot", "subsidy"].includes(blocking.key) ? 1 : 0));
 
   let headline;
-  if (result.verdict === "ok") {
+  if (!result.subsidyOK) {
+    headline = `The subsidy for this season has not been released yet. No depot can serve ${farmer.name} until the sub-county office confirms release.`;
+  } else if (result.verdict === "ok") {
     headline = `${farmer.name}, ${farmer.id}, is registered and cleared. ${depot.name} is an authorised redemption point.`;
   } else if (!result.depotOK) {
     headline = `${depot.name} is not an authorised redemption point for the e-Voucher scheme. ${farmer.name} should go to an NCPB depot, cooperative store, KNTC warehouse or registered agrovet.`;

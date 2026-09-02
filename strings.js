@@ -170,7 +170,8 @@ export const REQ = {
     acChief: "Validated by the local Assistant Chief",
     subCounty: "Approved by the Sub-County Agricultural Officer",
     withinLimit: "Bags-per-acre allocation not yet exhausted",
-    depot: "Not an authorised redemption point"
+    depot: "Not an authorised redemption point",
+    subsidy: "Subsidy not yet released by government"
   },
   sw: {
     registered: "Amesajiliwa katika mfumo wa vocha wa kaunti / KIAMIS",
@@ -179,7 +180,8 @@ export const REQ = {
     acChief: "Amethibitishwa na Chifu Msaidizi wa eneo",
     subCounty: "Ameidhinishwa na Afisa wa Kilimo wa Kaunti Ndogo",
     withinLimit: "Mgao wa mifuko kwa ekari bado haujaisha",
-    depot: "Si kituo kilichoidhinishwa kutoa mbolea"
+    depot: "Si kituo kilichoidhinishwa kutoa mbolea",
+    subsidy: "Ruzuku bado haijatolewa na serikali"
   }
 };
 

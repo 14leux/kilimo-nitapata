@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL, blockingItem, clerkSummary, ussdText, USSD_BUDGET } from "../engine.js";
+import { FARMERS, DEPOTS, REQUIREMENTS, SOURCES, PRICES, evaluate, VERDICT_LABEL, blockingItem, clerkSummary, ussdText, USSD_BUDGET, SUBSIDY_GATE } from "../engine.js";
 
 const pairs = FARMERS.flatMap((f) => DEPOTS.map((d) => [f, d]));
 
@@ -118,4 +118,42 @@ test("UI strings: every English key has a Swahili twin, every engine key is tran
       assert.ok(S.tReason(r, f, d).length > 10, `${l} ${f.id} x ${d.id} reason`);
     }
   }
+});
+
+test("subsidy gate: an unreleased season is Not Served for every pair, ranked above everything", () => {
+  const closed = { subsidyReleased: false };
+  for (const [f, d] of pairs) {
+    const r = evaluate(f, d, closed);
+    assert.equal(r.verdict, "danger", `${f.id} x ${d.id}`);
+    assert.equal(r.subsidyOK, false);
+    assert.equal(blockingItem(r, d).key, "subsidy", `${f.id} x ${d.id} blocking should be the gate`);
+    assert.equal(r.checks.length, REQUIREMENTS.length, "ledger still computed behind the gate");
+    const s = clerkSummary(f, d, closed);
+    assert.equal(s.verdict, "danger");
+    assert.equal(s.blocking.key, "subsidy");
+    assert.ok(s.headline.includes("not been released"));
+  }
+});
+
+test("gate order: subsidy, then depot, then registration, then the ledger", () => {
+  const unauth = DEPOTS.find((d) => !d.authorized);
+  const unreg = FARMERS.find((f) => !f.registered);
+  const auth = DEPOTS.find((d) => d.authorized);
+  const reg = FARMERS.find((f) => f.registered && f.acChief === false);
+  assert.equal(blockingItem(evaluate(unreg, unauth, { subsidyReleased: false }), unauth).key, "subsidy");
+  assert.equal(blockingItem(evaluate(unreg, unauth, { subsidyReleased: true }), unauth).key, "depot");
+  assert.equal(blockingItem(evaluate(unreg, auth, { subsidyReleased: true }), auth).key, "registered");
+  assert.equal(blockingItem(evaluate(reg, auth, { subsidyReleased: true }), auth).key, "acChief");
+});
+
+test("a released season, or no season, leaves every verdict exactly as the two-argument call", () => {
+  for (const [f, d] of pairs) {
+    const base = evaluate(f, d);
+    const open = evaluate(f, d, { subsidyReleased: true });
+    const none = evaluate(f, d, undefined);
+    assert.equal(base.subsidyOK, true);
+    assert.deepEqual(open, base, `${f.id} x ${d.id} released season changed the result`);
+    assert.deepEqual(none, base, `${f.id} x ${d.id} undefined season changed the result`);
+  }
+  assert.equal(SUBSIDY_GATE.src.length, 0, "the gate is an officer fact, not a cited requirement");
 });
