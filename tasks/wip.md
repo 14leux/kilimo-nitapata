@@ -2,7 +2,7 @@
 
 Read this first when resuming. Overwrite it whenever the in-progress task changes. Empty "In progress" means nothing was mid-flight.
 
-**Last updated:** 2 Sep 2026, session close
+**Last updated:** 16 Nov 2026, winner badge added to README and repo description; nothing in flight
 
 ## In progress
 
@@ -22,7 +22,11 @@ Nothing. Session closed cleanly.
 - The items above, whichever aren't already being picked up by the team (uxvic, KodeckJames, Kajim360 all have collaborator access).
 - A citable source for the depot/ward scale figures in MILESTONES.md, if one exists.
 
-## Done today
+## Done 16 Nov 2026
+
+- Added the Claude Community winner badge (`assets/claude-community-winner.png`) to the README top, a winner line under the intro, and updated the GitHub repo description (images cannot go in a description, text only).
+
+## Done 2 Sep 2026
 
 - V1 core (steps 0 to 6), Milestone B (location), Vercel connected and verified live.
 - Reviewed and merged uxvic's fork into master (`a415e61`): the v2 officer-release system, USSD (Milestone A code), a UI refresh. Found the merge sitting uncommitted from an earlier session, verified it (48/48 tests, engine.js properly reconciled), completed it, pushed. Commented on issue #1 with accurate status rather than closing it.

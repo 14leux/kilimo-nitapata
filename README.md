@@ -1,10 +1,12 @@
 # Kilimo, Nitapata?
 
+<p align="center"><img src="assets/claude-community-winner.png" alt="Claude Community badge: Kilimo Nitapata, winner, Impact Lab: AI Mashinani 02, 2 September 2026" width="280"></p>
+
 *Nikienda leo, nitapata?* If I go today, will I get it?
 
 A mobile-first web app that answers three questions for a registered smallholder farmer enrolled in Kenya's fertilizer e-Voucher scheme: will a given depot serve him, what is he still missing, and what does the bag cost. Verdict-first, with a citation trail behind every claim, computed by a deterministic rule table, never guessed by a model.
 
-Built for the Claude Impact Lab, Nairobi.
+Built for the Claude Impact Lab, Nairobi. **Winner, Impact Lab: AI Mashinani 02** (2 September 2026), by Mailu M., Victor A., Emmanuel M., Kodeck J. and James O.
 
 **Live:** [kilimo-nitapata.vercel.app](https://kilimo-nitapata.vercel.app)
 
