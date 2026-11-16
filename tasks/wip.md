@@ -2,7 +2,7 @@
 
 Read this first when resuming. Overwrite it whenever the in-progress task changes. Empty "In progress" means nothing was mid-flight.
 
-**Last updated:** 16 Nov 2026, repo made public, sustainability deck published and linked from README; nothing in flight
+**Last updated:** 16 Nov 2026, session close
 
 ## In progress
 

@@ -43,3 +43,28 @@ Status: CLOSED
 - git commit created: yes, `5d6188f`, "Second council: correct the per-farmer cost claim on the pitch".
 - git push completed: yes, `git log @{u}..HEAD` empty, confirmed below.
 - git worktree audit: clean, single worktree, no stray entries.
+
+---
+
+## Closing checkpoint, 16 Nov 2026
+
+**What happened this stretch:** added the Claude Community winner badge to the README top and a winner line under the intro; updated the GitHub repo description (text only, images cannot go there); scanned history for secrets and made the repo public; published `presentation-sustainability.html` (served at `/presentation-sustainability.html`, linked next to the Live link in the README); fixed `sw.js` so only `/` and `/index.html` navigations overwrite the cached app shell, and bumped `VERSION` to `kn-v5-2026-11-16`.
+
+**Completed:** all of the above, verified: 48/48 tests, deck returns HTTP 200 live, repo reports PUBLIC.
+
+**Current step:** none, session closing cleanly.
+
+**Next step:** unchanged, the six items in `tasks/wip.md` under "Next up". Extra note: the repo is public now, so check the sustainability deck's cost slide (farmer pays USSD unless toll-free is bought) before sharing the link with partners, the toll-free decision is still unmade.
+
+**Blockers:** none for the core product. Officer-mode API routes still 500 live until the Vercel env vars are set.
+
+Status: CLOSED
+
+Close Verification:
+- Knowledge/lessons file: none exists (lightweight discipline); the sw.js lesson is recorded in the FOUNDATION.md Decision Log row below.
+- DECISIONS.md: does not exist; FOUNDATION.md §9 updated: yes, entry "Repo made public; sustainability deck published..." (16 Nov 2026)
+- tasks/todo.md: does not exist in this project, n/a
+- Open Items table (FOUNDATION.md §8): updated: no, none raised or resolved this session
+- tasks/codebase_map.md: does not exist by documented decision (FOUNDATION.md §7), reconcile n/a
+- tasks/wip.md reset to empty template: yes
+- git commit and push: see the final lines of the close output
