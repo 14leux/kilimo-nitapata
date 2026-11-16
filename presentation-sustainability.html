@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kilimo, Nitapata? Sustainability</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* ===========================================
+     THEME, lifted directly from the live app's own
+     :root tokens (index.html) so this deck reads as
+     the same product, not a separate slide template.
+     =========================================== */
+  :root{
+    --bg:#F3F7F1; --surface:#FFFFFF; --surface-2:#E8EFE4;
+    --ink:#14211A; --ink-2:#4B5B51; --ink-3:#7E8C83; --line:#D7E1D3;
+    --primary:#2E7D4F; --primary-deep:#1F5C3A; --primary-ink:#FFFFFF;
+    --sun:#F2B233; --soil:#8C5A2B;
+    --ok:#1F7A45; --ok-bg:#DCF3E4; --warn:#9A5A0E; --warn-bg:#FCEBCF;
+    --danger:#B23A31; --danger-bg:#FADEDB;
+    --radius:20px; --radius-s:14px;
+    --shadow:0 1px 2px rgba(20,33,26,.05), 0 10px 30px rgba(20,33,26,.08);
+    --ease-out:cubic-bezier(.23,1,.32,1);
+    color-scheme: light;
+
+    --title-size: clamp(1.9rem, 5vw, 4.2rem);
+    --h2-size: clamp(1.3rem, 3.2vw, 2.3rem);
+    --body-size: clamp(0.95rem, 1.6vw, 1.25rem);
+    --small-size: clamp(0.75rem, 1vw, 0.95rem);
+    --slide-padding: clamp(1.5rem, 5vw, 5rem);
+    --content-gap: clamp(0.8rem, 2vw, 1.6rem);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F1613; --surface:#18221C; --surface-2:#223028;
+      --ink:#EEF4EF; --ink-2:#B3C2B8; --ink-3:#7C8B82; --line:#2E3C34;
+      --primary:#4FB27A; --primary-deep:#3B9463; --primary-ink:#0B1A11;
+      --ok:#6FD394; --ok-bg:#173324; --warn:#E8A94F; --warn-bg:#3A2A12;
+      --danger:#F0847A; --danger-bg:#3D1F1C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+      color-scheme: dark;
+    }
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ height:100%; overflow-x:hidden; }
+  html{ scroll-snap-type:y mandatory; scroll-behavior:smooth; }
+  body{
+    font-family:'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background:var(--bg); color:var(--ink); font-weight:500;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-weight:800; letter-spacing:-.02em; text-wrap:balance; }
+  .mono{ font-family:'JetBrains Mono', ui-monospace, monospace; }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace; font-size:var(--small-size);
+    letter-spacing:.12em; text-transform:uppercase; color:var(--primary);
+    font-weight:500;
+  }
+
+  .slide{
+    width:100vw; height:100vh; height:100dvh;
+    overflow:hidden; scroll-snap-align:start;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:var(--slide-padding); position:relative;
+  }
+  .slide-inner{ max-width:1000px; margin:0 auto; width:100%; }
+  .stack > * + *{ margin-top:var(--content-gap); }
+
+  .card{
+    background:var(--surface); border-radius:var(--radius);
+    padding:clamp(1.2rem,3vw,2rem); box-shadow:var(--shadow);
+  }
+  .reveal{
+    opacity:0; transform:translateY(24px);
+    transition:opacity .7s var(--ease-out), transform .7s var(--ease-out);
+  }
+  .slide.visible .reveal{ opacity:1; transform:translateY(0); }
+  .reveal:nth-child(1){ transition-delay:.05s; }
+  .reveal:nth-child(2){ transition-delay:.15s; }
+  .reveal:nth-child(3){ transition-delay:.25s; }
+  .reveal:nth-child(4){ transition-delay:.35s; }
+  .reveal:nth-child(5){ transition-delay:.45s; }
+
+  /* progress + nav dots, matches the app's pill language */
+  .progress{ position:fixed; top:0; left:0; height:3px; background:var(--primary); z-index:20; transition:width .4s var(--ease-out); }
+  .dots{ position:fixed; right:clamp(10px,2vw,26px); top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:9px; z-index:20; }
+  .dot{ width:8px; height:8px; border-radius:999px; background:var(--line); border:0; cursor:pointer; padding:0; transition:background .25s, transform .25s; }
+  .dot.active{ background:var(--primary); transform:scale(1.35); }
+  .hint{ position:fixed; left:50%; bottom:14px; transform:translateX(-50%); font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-3); z-index:20; letter-spacing:.04em; }
+  @media (max-width:640px){ .dots{ display:none; } }
+
+  /* ---- verdict stamp, reused from the app's own visual language ---- */
+  .stamp{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:10px 20px; border-radius:999px; font-weight:800;
+    font-size:clamp(1rem,2.4vw,1.5rem); letter-spacing:-.01em;
+  }
+  .stamp.ok{ background:var(--ok-bg); color:var(--ok); }
+  .stamp.warn{ background:var(--warn-bg); color:var(--warn); }
+  .stamp.danger{ background:var(--danger-bg); color:var(--danger); }
+  .stamp .dotpx{ width:9px; height:9px; border-radius:999px; background:currentColor; }
+
+  .num{
+    font-family:'JetBrains Mono',monospace; font-weight:500;
+    font-size:clamp(2.4rem,7vw,5.5rem); color:var(--primary); line-height:1;
+    letter-spacing:-.02em;
+  }
+  .num-label{ font-size:var(--small-size); color:var(--ink-2); margin-top:6px; }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(.8rem,2vw,1.6rem); }
+  @media (max-width:700px){ .grid2{ grid-template-columns:1fr; } }
+
+  .pq{
+    border-left:4px solid var(--sun); background:var(--surface-2);
+    padding:clamp(.9rem,2vw,1.4rem) clamp(1.1rem,2.5vw,1.8rem);
+    border-radius:0 var(--radius-s) var(--radius-s) 0;
+    font-size:var(--body-size); font-weight:600; line-height:1.5;
+  }
+  .pq cite{ display:block; margin-top:8px; font-style:normal; font-family:'JetBrains Mono',monospace; font-size:var(--small-size); color:var(--ink-3); font-weight:400; }
+
+  .tag{
+    display:inline-block; font-family:'JetBrains Mono',monospace; font-size:11px;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--ink-2);
+    padding:3px 9px; border-radius:999px; margin:3px 6px 0 0;
+  }
+  ul.bullets{ list-style:none; }
+  ul.bullets li{ position:relative; padding-left:24px; font-size:var(--body-size); color:var(--ink-2); line-height:1.5; }
+  ul.bullets li + li{ margin-top:.5em; }
+  ul.bullets li::before{ content:''; position:absolute; left:0; top:.55em; width:7px; height:7px; border-radius:999px; background:var(--primary); }
+
+  .kicker-title{ font-size:var(--title-size); line-height:1.05; margin-top:.3em; }
+  .lede{ color:var(--ink-2); font-size:var(--body-size); line-height:1.55; }
+
+  footer.brand{
+    position:fixed; left:clamp(1rem,3vw,2rem); bottom:14px; z-index:20;
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-3);
+    display:flex; align-items:center; gap:6px;
+  }
+  footer.brand b{ color:var(--primary); font-weight:600; }
+
+  /* persona / payer grid, same card language as the app's own About screen */
+  .persona-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:clamp(.5rem,1.5vw,.8rem); }
+  .persona-card{
+    background:var(--surface); border-radius:var(--radius-s); padding:clamp(.7rem,1.8vw,1.1rem);
+    box-shadow:var(--shadow); display:flex; flex-direction:column; gap:6px;
+  }
+  .persona-card.payer{ outline:2px solid var(--primary); }
+  .persona-card h3{ font-size:clamp(.85rem,1.6vw,1.05rem); font-weight:700; }
+  .persona-card p{ color:var(--ink-2); font-size:clamp(.72rem,1.3vw,.85rem); line-height:1.4; flex:1; }
+  .pay-tag{
+    align-self:flex-start; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.05em;
+    text-transform:uppercase; padding:3px 8px; border-radius:999px; font-weight:500;
+  }
+  .pay-tag.no{ background:var(--surface-2); color:var(--ink-3); }
+  .pay-tag.yes{ background:var(--primary); color:var(--primary-ink); font-weight:700; }
+
+  @media (max-height:680px){
+    :root{ --slide-padding:clamp(1rem,3vw,2rem); --content-gap:clamp(.5rem,1.5vw,1rem); }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .reveal{ transition:opacity .2s ease; transform:none; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Slides"></nav>
+<div class="hint">&larr; &rarr; or scroll &middot; click a dot</div>
+<footer class="brand"><b>Kilimo,</b> Nitapata?</footer>
+
+<!-- 1: TITLE -->
+<section class="slide" data-title="Title">
+  <div class="slide-inner stack">
+    <div class="eyebrow reveal">Sustainability &middot; Claude Impact Lab, Nairobi</div>
+    <h1 class="kicker-title reveal">Kilimo, <span style="color:var(--primary)">Nitapata?</span></h1>
+    <p class="lede reveal" style="max-width:34ch">A citation-backed status check for Kenya's fertilizer e&#8209;Voucher scheme, and the leverage that makes it worth running past today.</p>
+  </div>
+</section>
+
+<!-- 2: THE HOOK -->
+<section class="slide" data-title="The problem">
+  <div class="slide-inner stack">
+    <div class="eyebrow reveal">Why this needs to exist</div>
+    <h2 class="kicker-title reveal" style="font-size:var(--h2-size)">He can't tell a fair price from an inflated one.</h2>
+    <p class="lede reveal">He already knows he's enrolled. What he doesn't know, until he's standing at the counter, is whether the price he's quoted is real, or whether he's about to lose a day's labour and a fare finding out the hard way.</p>
+    <blockquote class="pq reveal">
+      One farmer reached his depot by 4am and still found seven people ahead of him.
+      <cite>The Star, 25 Aug 2026</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- 3: THE MECHANISM -->
+<section class="slide" data-title="The mechanism">
+  <div class="slide-inner stack">
+    <div class="eyebrow reveal">How it decides</div>
+    <h2 class="kicker-title reveal" style="font-size:var(--h2-size)">Never guessed. Always cited.</h2>
+    <div class="grid2 reveal">
+      <div class="card stack">
+        <span class="stamp ok"><span class="dotpx"></span>Available &middot; Utapata</span>
+        <p class="lede" style="font-size:var(--small-size)">A deterministic rule engine checks the farmer's own record against the depot's authorisation. No model inference in the verdict, ever.</p>
+      </div>
+      <div class="card stack">
+        <span class="stamp danger"><span class="dotpx"></span>Unavailable &middot; Hutapata</span>
+        <p class="lede" style="font-size:var(--small-size)">Every requirement, gate, and price traces to a named, dated source. Where sources disagree, both figures are shown, never one asserted as correct.</p>
+      </div>
+    </div>
+    <p class="lede reveal" style="font-size:var(--small-size)">Built to survive contact with the person who actually decides: the depot clerk with his own register and his own incentive to say no.</p>
+  </div>
+</section>
+
+<!-- 4: THE SCALE PIVOT -->
+<section class="slide" data-title="The leverage">
+  <div class="slide-inner stack">
+    <div class="eyebrow reveal">This is the sustainability story</div>
+    <h2 class="kicker-title reveal" style="font-size:var(--h2-size)">One release. Every farmer. Same moment.</h2>
+    <div class="grid2 reveal">
+      <div class="card" style="text-align:center">
+        <div class="num">1:1,800</div>
+        <div class="num-label">Kisumu county's own reported extension officer&#8209;to&#8209;farmer ratio</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="num">7.2M</div>
+        <div class="num-label">Farmers already registered on KIAMIS, Nov 2025</div>
+      </div>
+    </div>
+    <p class="lede reveal">A sub-county officer opens a release window. The same engine runs every farmer on her list. One press pushes status, price, and blocking item to everyone, in-app, SMS, WhatsApp, from one shared record. USSD stays available any time, for farmers checking on their own.</p>
+  </div>
+</section>
+
+<!-- 5: THE COST -->
+<section class="slide" data-title="What it costs">
+  <div class="slide-inner stack">
+    <div class="eyebrow reveal">What it actually costs to run</div>
+    <h2 class="kicker-title reveal" style="font-size:var(--h2-size)">A few hundred shillings, total, per release.</h2>
+    <div class="card reveal stack">
+      <ul class="bullets">
+        <li>Under ten dollars per release, for every farmer on an officer's list, on the channels we control the cost of: SMS and WhatsApp, roughly KES 0.50 to 1.50 a farmer.</li>
+        <li>USSD is free for us to run, but the session itself costs the farmer a few shillings on his own airtime, unless we buy the toll-free line. That trade-off is a design choice we're naming, not hiding.</li>
+        <li>Precedent already exists: Nakuru county runs a digital agriculture platform in a formal partnership with CARE Kenya and Digital Green, government-plus-NGO co-delivery of exactly this pattern.</li>
+      </ul>
+    </div>
+    <p class="lede reveal" style="font-size:var(--small-size)">Cheaper than one wasted trip, many times over. And the subsidy budget itself was cut from $77M to $61M this year, a shrinking pool makes "can he trust the number" sharper, not softer.</p>
+  </div>
+</section>
+
+<!-- 5.5: WHO PAYS, AND WHY -->
+<section class="slide" data-title="Who pays, and why">
+  <div class="slide-inner stack">
+    <div class="eyebrow reveal">Five people in this chain. One of them pays.</div>
+    <h2 class="kicker-title reveal" style="font-size:var(--h2-size)">A few hundred shillings buys five kinds of value.</h2>
+    <div class="persona-grid reveal">
+      <div class="persona-card">
+        <h3>Farmer</h3>
+        <p>Knows before he travels. Holds a citation at the counter.</p>
+        <span class="pay-tag no">Pays: no</span>
+      </div>
+      <div class="persona-card">
+        <h3>Proxy</h3>
+        <p>Relays a verified answer, not a guess, to the family.</p>
+        <span class="pay-tag no">Pays: no</span>
+      </div>
+      <div class="persona-card">
+        <h3>Depot clerk</h3>
+        <p>Not a user. The record he can't argue with.</p>
+        <span class="pay-tag no">Pays: no</span>
+      </div>
+      <div class="persona-card">
+        <h3>Extension officer</h3>
+        <p>1,800 farmers reached in one press, not 1,800 conversations.</p>
+        <span class="pay-tag no">Pays: no</span>
+      </div>
+      <div class="persona-card payer">
+        <h3>County / NGO partner</h3>
+        <p>A cheap, low-risk upgrade to extension delivery. Precedent already exists.</p>
+        <span class="pay-tag yes">Pays: yes</span>
+      </div>
+    </div>
+    <p class="lede reveal" style="font-size:var(--small-size)">The farmer is the one person in this chain who structurally cannot absorb another cost, that's the whole reason this exists. The ask sits inside a budget line the payer already has, not a new one.</p>
+  </div>
+</section>
+
+<!-- 6: THE HONEST GAP -->
+<section class="slide" data-title="What we haven't validated">
+  <div class="slide-inner stack">
+    <div class="eyebrow reveal">The one thing we haven't tested</div>
+    <h2 class="kicker-title reveal" style="font-size:var(--h2-size)">A system that timestamps her every action.</h2>
+    <p class="lede reveal">We haven't asked a real extension officer yet whether that's a convenience or a liability to her specifically. When a scheme misfires today, ambiguity protects the official from blame. This tool removes that ambiguity.</p>
+    <div class="card reveal">
+      <p class="mono" style="font-size:var(--small-size); color:var(--ink-2); line-height:1.6">"If every farmer on your list could see what you see, at the same time you see it, would that make your job easier, or harder?"</p>
+    </div>
+    <p class="lede reveal" style="font-size:var(--small-size)">That question, not a funding round, is the first real test.</p>
+  </div>
+</section>
+
+<!-- 7: WHAT'S NOT IN SCOPE -->
+<section class="slide" data-title="What this deliberately isn't">
+  <div class="slide-inner stack">
+    <div class="eyebrow reveal">What this deliberately is not</div>
+    <h2 class="kicker-title reveal" style="font-size:var(--h2-size)">Discipline is the differentiator.</h2>
+    <div class="reveal">
+      <span class="tag">Not a marketplace</span>
+      <span class="tag">Not agronomic advice</span>
+      <span class="tag">Not a payment step</span>
+      <span class="tag">Not live KIAMIS integration</span>
+    </div>
+    <p class="lede reveal">Each exclusion is a stated choice, not a gap we're hoping nobody asks about. In a room full of hackathon demos, that discipline, five cited sources, an honest "link pending" where one isn't verified, no model ever guessing a verdict, is itself the case study.</p>
+  </div>
+</section>
+
+<!-- 8: CLOSE -->
+<section class="slide" data-title="Close">
+  <div class="slide-inner stack">
+    <div class="eyebrow reveal">The sharpened value proposition</div>
+    <h2 class="kicker-title reveal" style="font-size:clamp(1.5rem,4vw,2.7rem); color:var(--primary)">
+      One officer's release reaches 1,800 farmers who all see the same number, at the same time, before anyone at the counter gets a chance to change the story.
+    </h2>
+    <p class="lede reveal">kilimo-nitapata.vercel.app &middot; Claude Impact Lab, Nairobi &middot; 2 Sep 2026</p>
+  </div>
+</section>
+
+<script>
+  /* ===========================================
+     Slide controller: keyboard, wheel, touch, dots.
+     Intersection Observer drives the .reveal stagger
+     so it replays cleanly each time a slide re-enters
+     view (useful when rehearsing out of order).
+     =========================================== */
+  const slides = [...document.querySelectorAll('.slide')];
+  const dotsEl = document.getElementById('dots');
+  const progressEl = document.getElementById('progress');
+
+  slides.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.className = 'dot';
+    b.setAttribute('aria-label', s.dataset.title || ('Slide ' + (i + 1)));
+    b.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth' }));
+    dotsEl.appendChild(b);
+  });
+  const dotEls = [...dotsEl.children];
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      const idx = slides.indexOf(e.target);
+      if (e.isIntersecting && e.intersectionRatio > 0.55) {
+        e.target.classList.add('visible');
+        dotEls.forEach((d, i) => d.classList.toggle('active', i === idx));
+        progressEl.style.width = (((idx + 1) / slides.length) * 100) + '%';
+      } else {
+        e.target.classList.remove('visible');
+      }
+    });
+  }, { threshold: [0, 0.55, 1] });
+  slides.forEach((s) => io.observe(s));
+
+  function currentIndex(){
+    return dotEls.findIndex((d) => d.classList.contains('active'));
+  }
+  function go(delta){
+    const i = Math.min(slides.length - 1, Math.max(0, currentIndex() + delta));
+    slides[i].scrollIntoView({ behavior: 'smooth' });
+  }
+  window.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); go(1); }
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(-1); }
+  });
+
+  // Touch swipe
+  let touchStartY = null;
+  window.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
+  window.addEventListener('touchend', (e) => {
+    if (touchStartY == null) return;
+    const dy = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 60) go(dy > 0 ? 1 : -1);
+    touchStartY = null;
+  }, { passive: true });
+</script>
+</body>
+</html>

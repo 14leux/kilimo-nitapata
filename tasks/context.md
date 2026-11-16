@@ -13,7 +13,7 @@ Stable facts a fresh session needs that are not obvious from the code. Keep shor
 - **Local run:** `npm test` (48/48). `npm run dev` serves static files only, does not run `/api/*`. Use `npx vercel dev` to exercise the USSD/officer endpoints locally.
 - **Repo:** `github.com/14leux/kilimo-nitapata`, private, branch `master`. Collaborators: uxvic, KodeckJames, Kajim360 (uxvic has forked). Zero PRs have ever been opened against this repo, work from the fork lands via direct merge, reviewed here, not there.
 - **Milestones:** B (location) shipped. A (USSD) has working code and an in-app simulator (`#ussd`), but its real test condition, a live Africa's Talking sandbox run, hasn't happened, tracked as [issue #1](https://github.com/14leux/kilimo-nitapata/issues/1).
-- **Sustainability narrative:** two council sessions, saved as `council-transcript-20260902T173000.md` (value prop, officer-release as the real sustainability story) and `council-transcript-20260902T190000.md` (corrected cost claim, persona/payer table). A local-only presentation, `presentation-sustainability.html`, exists for the user's own laptop use, not committed, not pushed, per explicit instruction.
+- **Sustainability narrative:** two council sessions, saved as `council-transcript-20260902T173000.md` (value prop, officer-release as the real sustainability story) and `council-transcript-20260902T190000.md` (corrected cost claim, persona/payer table). The deck `presentation-sustainability.html` was local-only until 16 Nov 2026, when the user asked for it published; it is now committed and served at /presentation-sustainability.html.
 
 ---
 

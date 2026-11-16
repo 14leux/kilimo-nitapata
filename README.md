@@ -8,7 +8,7 @@ A mobile-first web app that answers three questions for a registered smallholder
 
 Built for the Claude Impact Lab, Nairobi. **Winner, Impact Lab: AI Mashinani 02** (2 September 2026), by Mailu M., Victor A., Emmanuel M., Kodeck J. and James O.
 
-**Live:** [kilimo-nitapata.vercel.app](https://kilimo-nitapata.vercel.app)
+**Live:** [kilimo-nitapata.vercel.app](https://kilimo-nitapata.vercel.app) &nbsp;|&nbsp; **Sustainability deck:** [kilimo-nitapata.vercel.app/presentation-sustainability.html](https://kilimo-nitapata.vercel.app/presentation-sustainability.html)
 
 ## Start here
 

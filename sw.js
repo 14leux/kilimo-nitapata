@@ -2,7 +2,7 @@
 // Everything the app needs is static, so the whole app is precached and
 // served from cache first. Bump VERSION on every deploy; the old cache is
 // dropped on activate.
-const VERSION = "kn-v4-2026-09-02";
+const VERSION = "kn-v5-2026-11-16";
 const APP = ["./", "./index.html", "./engine.js", "./strings.js", "./manifest.json", "./icon.svg", "./icon-maskable.svg"];
 
 self.addEventListener("install", (e) => {
@@ -31,7 +31,7 @@ self.addEventListener("fetch", (e) => {
       if (e.request.mode === "navigate") {
         try {
           const fresh = await fetch(e.request);
-          if (fresh && fresh.ok) cache.put("./index.html", fresh.clone());
+          if (fresh && fresh.ok && (url.pathname === "/" || url.pathname === "/index.html")) cache.put("./index.html", fresh.clone());
           return fresh;
         } catch {
           return (await cache.match("./index.html")) || new Response("Offline", { status: 503 });

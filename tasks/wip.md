@@ -2,7 +2,7 @@
 
 Read this first when resuming. Overwrite it whenever the in-progress task changes. Empty "In progress" means nothing was mid-flight.
 
-**Last updated:** 16 Nov 2026, winner badge added to README and repo description; nothing in flight
+**Last updated:** 16 Nov 2026, repo made public, sustainability deck published and linked from README; nothing in flight
 
 ## In progress
 
@@ -23,6 +23,8 @@ Nothing. Session closed cleanly.
 - A citable source for the depot/ward scale figures in MILESTONES.md, if one exists.
 
 ## Done 16 Nov 2026
+
+- Repo made public. Published `presentation-sustainability.html` (served at /presentation-sustainability.html, linked beside the Live link in README). Fixed sw.js so visiting a non-index page no longer overwrites the cached app shell; bumped VERSION to kn-v5.
 
 - Added the Claude Community winner badge (`assets/claude-community-winner.png`) to the README top, a winner line under the intro, and updated the GitHub repo description (images cannot go in a description, text only).
 
